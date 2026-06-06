@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file: .env
+    volumes:
+      - ./data:/app/data            # persists crm.db
+      - ./watched:/app/watched      # the folder to watch (mount the real path here)
+    restart: unless-stopped
