@@ -3,7 +3,7 @@
 Code-first CRM + task + reminder system for a food photographer. FastAPI +
 SQLAlchemy + SQLite, with an in-process reminder engine (APScheduler) and folder
 watcher (watchdog). No no-code platforms; the only external services are the
-messaging APIs (Instagram, WhatsApp, Telegram).
+messaging APIs (Instagram, WhatsApp).
 
 ## Status
 Phase 1 scaffold: foundation (config, DB, models, schemas, app entrypoint) is
@@ -46,7 +46,7 @@ app/
   models.py      all ORM tables (tenant_id on every row)
   schemas.py     Pydantic read models
   routes/        webhooks, leads, clients, shoots, tasks, dashboard
-  services/      leads, shoots, tasks, reminders, telegram, instagram, whatsapp
+  services/      leads, shoots, tasks, reminders, instagram, whatsapp
   scheduler/     APScheduler jobs (reminder engine)
   watcher/       watchdog folder watcher
   templates/     Jinja + HTMX
@@ -57,6 +57,6 @@ tests/           pytest
 1. **MVP** — models, CRUD, dashboard  *(foundation done; routes/services next)*
 2. **Instagram + WhatsApp** — webhook ingest + replies
 3. **Media watcher** — new video -> editing task
-4. **Reminder engine** — rule evaluator -> Telegram
+4. **Reminder engine** — rule evaluator -> WhatsApp (templates)
 5. **Dashboard polish** — aggregations, inline edits, mobile
 6. **Deploy** — Docker, TLS, Meta App Review

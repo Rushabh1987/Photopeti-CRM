@@ -6,7 +6,7 @@ A code-first CRM + task + reminder system for a solo food photographer, built in
 
 ## Hard rules (do not violate)
 
-- **Code-first only.** No n8n / Make / Zapier / Bubble / Retool / Airtable automations. All orchestration and business logic lives in this app's code. The only external services allowed are messaging APIs that can't be self-hosted (Instagram, WhatsApp, Telegram).
+- **Code-first only.** No n8n / Make / Zapier / Bubble / Retool / Airtable automations. All orchestration and business logic lives in this app's code. The only external services allowed are messaging APIs that can't be self-hosted (Instagram, WhatsApp).
 - **Persistent data only.** Everything is stored in a real on-disk database via SQLAlchemy. Nothing in-memory or temporary. Data survives restarts, crashes, and redeploys.
 - **Cheapest practical.** Open-source libraries, self-hosted, runs on a PC or a ~$5 VPS.
 - **Multi-tenant ready.** Every table has `tenant_id` (default 1) from day one so a single-owner app can later become a multi-business SaaS without a rewrite.
@@ -25,7 +25,7 @@ A code-first CRM + task + reminder system for a solo food photographer, built in
 | ---------------------------------- | ---------------------------------- | --------------------------------------------------------------------------------------------- |
 | Instagram Messaging API            | Capture + reply to DMs             | Needs Professional account + Facebook Page + Meta App Review. No scraping.                    |
 | WhatsApp Cloud API                 | Capture + reply to messages        | Inbound/replies in 24h window are free.                                                       |
-| Telegram Bot API                   | Reminders to the owner             | Free, instant. Chosen channel for all reminders.                                              |
+| WhatsApp Cloud API (templates)     | Reminders to the owner             | Uses pre-approved message templates for proactive outreach outside the 24h window.            |
 | Android (custom app or MacroDroid) | Log incoming/outgoing/missed calls | POSTs call data to `/webhooks/call`. Custom Kotlin app is the code-first option (sideloaded). |
 
 ---
@@ -87,10 +87,10 @@ Re-evaluated every 15 min; repeats until the owner resolves the condition (no ma
 
 ### Part 5 — Reminder engine
 
-- **Goal:** automatic reminders to the owner via Telegram until tasks are done.
-- **Files:** `services/reminders.py` (RULES + `evaluate(db)`), `services/telegram.py` (httpx `sendMessage`), `scheduler/jobs.py` (APScheduler every 15 min); start/stop in `main.py` lifespan.
-- **Implement:** the five rules above; idempotent via the `reminders` table + per-rule cooldown; send Telegram message; log each send.
-- **Test:** create a lead, backdate first_contact >2h, run evaluate → one Telegram message + one reminder row; run again within cooldown → none.
+- **Goal:** automatic reminders to the owner via WhatsApp until tasks are done.
+- **Files:** `services/reminders.py` (RULES + `evaluate(db)`), `services/whatsapp.py` (httpx `sendMessage` using approved templates), `scheduler/jobs.py` (APScheduler every 15 min); start/stop in `main.py` lifespan.
+- **Implement:** the five rules above; idempotent via the `reminders` table + per-rule cooldown; send WhatsApp template message; log each send.
+- **Test:** create a lead, backdate first_contact >2h, run evaluate → one WhatsApp message + one reminder row; run again within cooldown → none.
 - **Done when:** overdue items reliably nudge the owner and stop once resolved.
 
 ### Part 6 — Instagram + WhatsApp ingest
