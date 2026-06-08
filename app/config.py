@@ -5,24 +5,21 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    # Core
-    database_url: str = "sqlite:///./data/crm.db"
-    watch_folder: str = "./watched"
+    # Core — Supabase PostgreSQL connection string
+    database_url: str
     reminder_interval_minutes: int = 15
-
-    # Telegram (reminders to owner)
-    telegram_bot_token: str = ""
-    telegram_chat_id: str = ""
 
     # Meta shared
     meta_verify_token: str = ""
 
-    # Instagram
+    # Instagram (lead capture)
     instagram_access_token: str = ""
 
-    # WhatsApp Cloud API
+    # WhatsApp Cloud API (owner reminders)
     whatsapp_access_token: str = ""
     whatsapp_phone_number_id: str = ""
+    whatsapp_owner_number: str = ""
+    lead_keywords: str = "book,booking,shoot,photography,food shoot,rate,rates,price,pricing,available,availability,hire,quote,inquiry,package,how much,cost,interested,collaboration,project"
 
 
 settings = Settings()

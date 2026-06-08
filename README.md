@@ -1,9 +1,10 @@
 # Photographer CRM
 
-Code-first CRM + task + reminder system for a food photographer. FastAPI +
-SQLAlchemy + SQLite, with an in-process reminder engine (APScheduler) and folder
-watcher (watchdog). No no-code platforms; the only external services are the
-messaging APIs (Instagram, WhatsApp).
+Code-first CRM for a food photographer. FastAPI + SQLAlchemy + PostgreSQL (Supabase),
+with an in-process reminder engine (APScheduler). Tracks brands, shoots, editing,
+and payments. Captures Instagram leads automatically via keyword filtering. No no-code
+platforms; only external services are Supabase (database), Instagram (lead capture),
+and WhatsApp (owner reminders).
 
 ## Status
 Phase 1 scaffold: foundation (config, DB, models, schemas, app entrypoint) is
@@ -14,7 +15,7 @@ with signatures and filled in per phase.
 ```bash
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env        # fill in tokens as you reach Phase 2/4
+cp .env.example .env        # fill in DATABASE_URL from Supabase dashboard
 uvicorn app.main:app --reload
 ```
 - App: http://127.0.0.1:8000
@@ -34,8 +35,6 @@ pytest -q
 cp .env.example .env
 docker compose up --build
 ```
-Mount the real video folder by editing the `./watched` volume in
-`docker-compose.yml`. The watcher only sees files on the machine it runs on.
 
 ## Layout
 ```
@@ -45,18 +44,17 @@ app/
   db.py          engine, session, init_db()
   models.py      all ORM tables (tenant_id on every row)
   schemas.py     Pydantic read models
-  routes/        webhooks, leads, clients, shoots, tasks, dashboard
-  services/      leads, shoots, tasks, reminders, instagram, whatsapp
+  routes/        webhooks, leads, brands, shoots, dashboard
+  services/      leads, shoots, reminders, instagram, whatsapp
   scheduler/     APScheduler jobs (reminder engine)
-  watcher/       watchdog folder watcher
   templates/     Jinja + HTMX
 tests/           pytest
 ```
 
 ## Build phases
-1. **MVP** — models, CRUD, dashboard  *(foundation done; routes/services next)*
-2. **Instagram + WhatsApp** — webhook ingest + replies
-3. **Media watcher** — new video -> editing task
-4. **Reminder engine** — rule evaluator -> WhatsApp (templates)
-5. **Dashboard polish** — aggregations, inline edits, mobile
+1. **Foundation** — models, DB, health check *(done)*
+2. **Core CRUD + dashboard API** — brands, leads, shoots, dashboard counts
+3. **Dashboard UI** — Jinja2 + HTMX, brand pages, shoot checkboxes, mobile + web
+4. **Reminder engine** — lead_unreplied_2h rule -> WhatsApp template (APScheduler)
+5. **Instagram ingest** — keyword-filtered DM capture + replies
 6. **Deploy** — Docker, TLS, Meta App Review

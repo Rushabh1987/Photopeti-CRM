@@ -1,6 +1,4 @@
 """Database engine, session factory, and the declarative Base."""
-import os
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
@@ -11,10 +9,7 @@ class Base(DeclarativeBase):
     pass
 
 
-_is_sqlite = settings.database_url.startswith("sqlite")
-_connect_args = {"check_same_thread": False} if _is_sqlite else {}
-
-engine = create_engine(settings.database_url, connect_args=_connect_args)
+engine = create_engine(settings.database_url)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
@@ -28,9 +23,6 @@ def get_db():
 
 
 def init_db() -> None:
-    """Create the data dir (for SQLite) and all tables. Safe to call repeatedly."""
-    if _is_sqlite:
-        path = settings.database_url.replace("sqlite:///", "")
-        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    """Create all tables. Safe to call repeatedly."""
     import app.models  # noqa: F401  (register models on Base)
     Base.metadata.create_all(bind=engine)
