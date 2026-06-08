@@ -16,9 +16,10 @@ from app.routes import brands, dashboard, leads, shoots, ui
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
-    # Part 4 -> from app.scheduler.jobs import start_scheduler, stop_scheduler
+    from app.scheduler.jobs import start_scheduler, stop_scheduler
+    start_scheduler()
     yield
-    # Part 4 -> stop_scheduler()
+    stop_scheduler()
 
 
 app = FastAPI(title="Photographer CRM", version="0.1.0", lifespan=lifespan)
