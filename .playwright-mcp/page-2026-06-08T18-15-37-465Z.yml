@@ -1,0 +1,51 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - text: Studio
+    - generic [ref=e3]: CRM
+  - main [ref=e4]:
+    - generic [ref=e6]:
+      - heading "Dashboard" [level=1] [ref=e7]
+      - paragraph [ref=e8]: Overview of your pipeline
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]: "0"
+        - generic [ref=e12]: New Leads
+      - generic [ref=e13]:
+        - generic [ref=e14]: "0"
+        - generic [ref=e15]: Unreplied >2h
+      - generic [ref=e16]:
+        - generic [ref=e17]: "1"
+        - generic [ref=e18]: Today's Shoots
+      - generic [ref=e19]:
+        - generic [ref=e20]: "0"
+        - generic [ref=e21]: Editing Pending
+      - generic [ref=e22]:
+        - generic [ref=e23]: "1"
+        - generic [ref=e24]: Payments Due
+    - generic [ref=e26]: Quick access
+    - generic [ref=e27]:
+      - link "Brands Manage shoots & payments" [ref=e28] [cursor=pointer]:
+        - /url: /brands
+        - img [ref=e30]
+        - generic [ref=e33]:
+          - generic [ref=e34]: Brands
+          - generic [ref=e35]: Manage shoots & payments
+      - link "Leads Track & convert prospects" [ref=e36] [cursor=pointer]:
+        - /url: /leads
+        - img [ref=e38]
+        - generic [ref=e41]:
+          - generic [ref=e42]: Leads
+          - generic [ref=e43]: Track & convert prospects
+  - navigation [ref=e44]:
+    - link "Dashboard" [ref=e45] [cursor=pointer]:
+      - /url: /dashboard
+      - img [ref=e46]
+      - generic [ref=e51]: Dashboard
+    - link "Brands" [ref=e52] [cursor=pointer]:
+      - /url: /brands
+      - img [ref=e53]
+      - generic [ref=e56]: Brands
+    - link "Leads" [ref=e57] [cursor=pointer]:
+      - /url: /leads
+      - img [ref=e58]
+      - generic [ref=e61]: Leads

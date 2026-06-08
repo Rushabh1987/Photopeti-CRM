@@ -15,7 +15,7 @@ DEFAULT_TENANT = 1
 
 # Allowed values (documented; enforced in the service layer):
 LEAD_SOURCES = ("instagram", "manual")
-LEAD_STATUSES = ("new", "replied", "follow_up", "converted", "closed")
+LEAD_STATUSES = ("new", "replied", "converted", "closed")
 MSG_DIRECTIONS = ("in", "out")
 MSG_CHANNELS = ("instagram",)
 SHOOT_TYPES = ("photo", "video")

@@ -9,7 +9,7 @@
             hx-target="#lead-{{ lead.id }}"
             hx-swap="outerHTML"
             hx-include="this">
-      {% for s in ['new', 'replied', 'follow_up', 'converted', 'closed'] %}
+      {% for s in ['new', 'replied', 'converted', 'closed'] %}
         <option value="{{ s }}" {% if lead.status == s %}selected{% endif %}>
           {{ s | replace('_', ' ') | title }}
         </option>

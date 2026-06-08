@@ -1,0 +1,62 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]: StudioCRM
+    - list [ref=e4]:
+      - listitem [ref=e5]:
+        - link "Dashboard" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e7]
+          - text: Dashboard
+      - listitem [ref=e12]:
+        - link "Brands" [ref=e13] [cursor=pointer]:
+          - /url: /brands
+          - img [ref=e14]
+          - text: Brands
+      - listitem [ref=e17]:
+        - link "Leads" [ref=e18] [cursor=pointer]:
+          - /url: /leads
+          - img [ref=e19]
+          - text: Leads
+  - main [ref=e22]:
+    - link "Brands" [ref=e23] [cursor=pointer]:
+      - /url: /brands
+      - img [ref=e24]
+      - text: Brands
+    - generic [ref=e26]:
+      - generic [ref=e27]:
+        - generic [ref=e28]: Maggie
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - img [ref=e31]
+            - text: "@maggie_india"
+          - generic [ref=e35]:
+            - img [ref=e36]
+            - text: "9999999999"
+      - generic [ref=e38] [cursor=pointer]:
+        - checkbox [ref=e39]
+        - generic [ref=e40]: Payment pending
+    - generic [ref=e42]: Shoots
+    - group [ref=e43]:
+      - generic "Add Shoot" [ref=e44] [cursor=pointer]:
+        - img [ref=e45]
+        - text: Add Shoot
+      - option "Photo" [selected]
+      - option "Video"
+    - table [ref=e48]:
+      - rowgroup [ref=e49]:
+        - row "Description Type Date Shoot done Editing done" [ref=e50]:
+          - columnheader "Description" [ref=e51]
+          - columnheader "Type" [ref=e52]
+          - columnheader "Date" [ref=e53]
+          - columnheader "Shoot done" [ref=e54]
+          - columnheader "Editing done" [ref=e55]
+      - rowgroup [ref=e56]:
+        - row "Pasta range video video 08 Jun 2026" [ref=e66]:
+          - cell "Pasta range video" [ref=e67]
+          - cell "video" [ref=e68]:
+            - generic [ref=e69]: video
+          - cell "08 Jun 2026" [ref=e70]
+          - cell [ref=e71]:
+            - checkbox [checked] [ref=e72] [cursor=pointer]
+          - cell [ref=e73]:
+            - checkbox [checked] [ref=e74] [cursor=pointer]

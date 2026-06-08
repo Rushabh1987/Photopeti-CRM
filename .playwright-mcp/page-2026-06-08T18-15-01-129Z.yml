@@ -1,0 +1,53 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]: StudioCRM
+    - list [ref=e4]:
+      - listitem [ref=e5]:
+        - link "Dashboard" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e7]
+          - text: Dashboard
+      - listitem [ref=e12]:
+        - link "Brands" [ref=e13] [cursor=pointer]:
+          - /url: /brands
+          - img [ref=e14]
+          - text: Brands
+      - listitem [ref=e17]:
+        - link "Leads" [ref=e18] [cursor=pointer]:
+          - /url: /leads
+          - img [ref=e19]
+          - text: Leads
+  - main [ref=e22]:
+    - generic [ref=e24]:
+      - heading "Leads" [level=1] [ref=e25]
+      - paragraph [ref=e26]: 1 lead
+    - group [ref=e27]:
+      - generic "Add Lead" [ref=e28] [cursor=pointer]:
+        - img [ref=e29]
+        - text: Add Lead
+      - option "No brand" [selected]
+      - option "Maggie"
+      - option "Manual" [selected]
+      - option "Instagram"
+    - table [ref=e32]:
+      - rowgroup [ref=e33]:
+        - row "Brand Source Status First contact Last activity" [ref=e34]:
+          - columnheader "Brand" [ref=e35]
+          - columnheader "Source" [ref=e36]
+          - columnheader "Status" [ref=e37]
+          - columnheader "First contact" [ref=e38]
+          - columnheader "Last activity" [ref=e39]
+      - rowgroup [ref=e40]:
+        - row "Maggie instagram New 08 Jun 2026 08 Jun 2026" [ref=e41]:
+          - cell "Maggie" [ref=e42]
+          - cell "instagram" [ref=e43]:
+            - generic [ref=e44]: instagram
+          - cell "New" [ref=e45]:
+            - combobox [ref=e46] [cursor=pointer]:
+              - option "New" [selected]
+              - option "Replied"
+              - option "Follow Up"
+              - option "Converted"
+              - option "Closed"
+          - cell "08 Jun 2026" [ref=e47]
+          - cell "08 Jun 2026" [ref=e48]

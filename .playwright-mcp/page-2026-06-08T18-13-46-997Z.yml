@@ -1,0 +1,53 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]: StudioCRM
+    - list [ref=e4]:
+      - listitem [ref=e5]:
+        - link "Dashboard" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e7]
+          - text: Dashboard
+      - listitem [ref=e12]:
+        - link "Brands" [ref=e13] [cursor=pointer]:
+          - /url: /brands
+          - img [ref=e14]
+          - text: Brands
+      - listitem [ref=e17]:
+        - link "Leads" [ref=e18] [cursor=pointer]:
+          - /url: /leads
+          - img [ref=e19]
+          - text: Leads
+  - main [ref=e22]:
+    - generic [ref=e24]:
+      - heading "Dashboard" [level=1] [ref=e25]
+      - paragraph [ref=e26]: Overview of your pipeline
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]: "1"
+        - generic [ref=e30]: New Leads
+      - generic [ref=e31]:
+        - generic [ref=e32]: "0"
+        - generic [ref=e33]: Unreplied >2h
+      - generic [ref=e34]:
+        - generic [ref=e35]: "1"
+        - generic [ref=e36]: Today's Shoots
+      - generic [ref=e37]:
+        - generic [ref=e38]: "1"
+        - generic [ref=e39]: Editing Pending
+      - generic [ref=e40]:
+        - generic [ref=e41]: "1"
+        - generic [ref=e42]: Payments Due
+    - generic [ref=e44]: Quick access
+    - generic [ref=e45]:
+      - link "Brands Manage shoots & payments" [ref=e46] [cursor=pointer]:
+        - /url: /brands
+        - img [ref=e48]
+        - generic [ref=e51]:
+          - generic [ref=e52]: Brands
+          - generic [ref=e53]: Manage shoots & payments
+      - link "Leads Track & convert prospects" [ref=e54] [cursor=pointer]:
+        - /url: /leads
+        - img [ref=e56]
+        - generic [ref=e59]:
+          - generic [ref=e60]: Leads
+          - generic [ref=e61]: Track & convert prospects

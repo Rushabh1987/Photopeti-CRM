@@ -1,0 +1,45 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]: StudioCRM
+    - list [ref=e4]:
+      - listitem [ref=e5]:
+        - link "Dashboard" [ref=e6] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e7]
+          - text: Dashboard
+      - listitem [ref=e12]:
+        - link "Brands" [ref=e13] [cursor=pointer]:
+          - /url: /brands
+          - img [ref=e14]
+          - text: Brands
+      - listitem [ref=e17]:
+        - link "Leads" [ref=e18] [cursor=pointer]:
+          - /url: /leads
+          - img [ref=e19]
+          - text: Leads
+  - main [ref=e22]:
+    - generic [ref=e24]:
+      - heading "Brands" [level=1] [ref=e25]
+      - paragraph [ref=e26]: 1 brand
+    - group [ref=e27]:
+      - generic "Add Brand" [ref=e28] [cursor=pointer]:
+        - img [ref=e29]
+        - text: Add Brand
+    - table [ref=e32]:
+      - rowgroup [ref=e33]:
+        - row "Brand Instagram Leads Shoots Payment" [ref=e34]:
+          - columnheader "Brand" [ref=e35]
+          - columnheader "Instagram" [ref=e36]
+          - columnheader "Leads" [ref=e37]
+          - columnheader "Shoots" [ref=e38]
+          - columnheader "Payment" [ref=e39]
+      - rowgroup [ref=e40]:
+        - row "Maggie @maggie_india 1 1 Pending" [ref=e41]:
+          - cell "Maggie" [ref=e42]:
+            - link "Maggie" [ref=e43] [cursor=pointer]:
+              - /url: /brands/1
+          - cell "@maggie_india" [ref=e44]
+          - cell "1" [ref=e45]
+          - cell "1" [ref=e46]
+          - cell "Pending" [ref=e47]:
+            - generic [ref=e48]: Pending

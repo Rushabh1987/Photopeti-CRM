@@ -72,6 +72,7 @@ button, input, select, textarea { font-family: inherit; }
   letter-spacing: -0.02em;
 }
 .logo-accent { color: var(--accent); }
+.logo-img { height: 52px; width: auto; display: block; object-fit: contain; }
 
 .nav-list { list-style: none; padding: 0.625rem 0.5rem; flex: 1; }
 .nav-item {
@@ -316,7 +317,6 @@ td {
 }
 .badge-new        { background: var(--blue-dim);   color: var(--blue);    }
 .badge-replied    { background: var(--accent-dim);  color: var(--accent-h);}
-.badge-follow_up  { background: var(--orange-dim);  color: var(--orange);  }
 .badge-converted  { background: var(--green-dim);   color: var(--green);   }
 .badge-closed     { background: rgba(92,87,80,.14); color: var(--text-3);  }
 .badge-instagram  { background: var(--pink-dim);    color: var(--pink);    }
@@ -363,7 +363,6 @@ select.status-select {
 }
 select.status-select.s-new       { color: var(--blue);    }
 select.status-select.s-replied   { color: var(--accent-h);}
-select.status-select.s-follow_up { color: var(--orange);  }
 select.status-select.s-converted { color: var(--green);   }
 select.status-select.s-closed    { color: var(--text-3);  }
 select.status-select option { background: var(--surface-2); color: var(--text); }
