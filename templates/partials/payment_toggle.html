@@ -1,0 +1,8 @@
+<div id="payment-toggle" class="payment-area {% if brand.payment_done %}done{% endif %}">
+  <input type="checkbox" class="toggle"
+         {% if brand.payment_done %}checked{% endif %}
+         hx-post="/ui/brands/{{ brand.id }}/toggle-payment"
+         hx-target="#payment-toggle"
+         hx-swap="outerHTML">
+  <span>Payment {{ 'received' if brand.payment_done else 'pending' }}</span>
+</div>

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}{{ brand.name }} — Studio CRM{% endblock %}
+
+{% block content %}
+
+<a href="/brands" class="back-link">
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 5l-5 5 5 5"/>
+  </svg>
+  Brands
+</a>
+
+<!-- Brand header -->
+<div class="brand-header">
+  <div class="brand-info">
+    <div class="brand-name">{{ brand.name }}</div>
+    <div class="brand-meta">
+      {% if brand.instagram %}
+      <div class="brand-meta-item">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+          <rect x="3" y="3" width="14" height="14" rx="4"/>
+          <circle cx="10" cy="10" r="3"/>
+          <circle cx="14.5" cy="5.5" r="0.75" fill="currentColor" stroke="none"/>
+        </svg>
+        {{ brand.instagram }}
+      </div>
+      {% endif %}
+      {% if brand.phone %}
+      <div class="brand-meta-item">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M3 5a2 2 0 012-2h1.2L8 7l-1.5 1a11 11 0 005.5 5.5L13 12l3.8 1.8V15a2 2 0 01-2 2C8.4 17 3 11.6 3 5z"/>
+        </svg>
+        {{ brand.phone }}
+      </div>
+      {% endif %}
+      {% if brand.email %}
+      <div class="brand-meta-item">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+          <rect x="2" y="5" width="16" height="12" rx="2"/>
+          <path d="M2 7l8 5 8-5"/>
+        </svg>
+        {{ brand.email }}
+      </div>
+      {% endif %}
+      {% if brand.notes %}
+      <div class="brand-meta-item">{{ brand.notes }}</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Payment toggle (HTMX) -->
+  {% include "partials/payment_toggle.html" %}
+</div>
+
+<!-- Shoots section -->
+<div class="section-head">
+  <span class="section-title">Shoots</span>
+</div>
+
+<details class="add-panel">
+  <summary class="btn btn-ghost">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M10 4v12M4 10h12"/>
+    </svg>
+    Add Shoot
+  </summary>
+  <div class="form-panel">
+    <form method="POST" action="/ui/shoots">
+      <input type="hidden" name="brand_id" value="{{ brand.id }}">
+      <div class="form-grid">
+        <div class="field">
+          <label for="type">Type</label>
+          <select id="type" name="type">
+            <option value="photo">Photo</option>
+            <option value="video">Video</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="shoot_date">Shoot date</label>
+          <input type="date" id="shoot_date" name="shoot_date">
+        </div>
+        <div class="field full">
+          <label for="description">Description</label>
+          <input type="text" id="description" name="description" placeholder="e.g. Pasta range — 10 hero shots">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Shoot</button>
+      </div>
+    </form>
+  </div>
+</details>
+
+{% if shoots %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Date</th>
+        <th>Shoot done</th>
+        <th>Editing done</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for shoot in shoots %}
+        {% include "partials/shoot_row.html" %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">No shoots yet. Add the first one above.</div>
+{% endif %}
+
+{% endblock %}

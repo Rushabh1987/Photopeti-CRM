@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.db import init_db
-from app.routes import brands, dashboard, leads, shoots
+from app.routes import brands, dashboard, leads, shoots, ui
 
 
 @asynccontextmanager
@@ -24,6 +24,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Photographer CRM", version="0.1.0", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+app.include_router(ui.router)
 app.include_router(brands.router)
 app.include_router(leads.router)
 app.include_router(shoots.router)

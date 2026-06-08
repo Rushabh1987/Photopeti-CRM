@@ -63,7 +63,7 @@ Re-evaluated every 15 min; repeats until the owner resolves the condition (no ma
 - **Test:** create a brand → add lead → convert → create shoot → tick checkboxes → dashboard counts update.
 - **Done when:** every entity is fully manageable via `/docs` and dashboard counts are correct.
 
-### Part 3 — Dashboard UI
+### Part 3 — Dashboard UI ✅ (done)
 
 - **Goal:** mobile + web dashboard, brand pages, shoot rows with inline checkboxes.
 - **Files:** `templates/base.html`, `templates/dashboard.html`, `templates/leads.html`, `templates/brands.html`, `templates/shoots.html`, `static/` CSS; HTMX-driven inline checkbox updates.

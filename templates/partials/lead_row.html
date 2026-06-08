@@ -1,0 +1,21 @@
+<tr id="lead-{{ lead.id }}">
+  <td class="td-name">{{ brand_name or '—' }}</td>
+  <td><span class="badge badge-{{ lead.source }}">{{ lead.source }}</span></td>
+  <td>
+    <select class="status-select s-{{ lead.status }}"
+            name="status"
+            hx-post="/ui/leads/{{ lead.id }}/status"
+            hx-trigger="change"
+            hx-target="#lead-{{ lead.id }}"
+            hx-swap="outerHTML"
+            hx-include="this">
+      {% for s in ['new', 'replied', 'follow_up', 'converted', 'closed'] %}
+        <option value="{{ s }}" {% if lead.status == s %}selected{% endif %}>
+          {{ s | replace('_', ' ') | title }}
+        </option>
+      {% endfor %}
+    </select>
+  </td>
+  <td class="td-muted">{{ lead.first_contact_at.strftime('%d %b %Y') }}</td>
+  <td class="td-muted">{{ lead.last_activity_at.strftime('%d %b %Y') }}</td>
+</tr>

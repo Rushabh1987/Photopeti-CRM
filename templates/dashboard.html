@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Studio CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-subtitle">Overview of your pipeline</p>
+  </div>
+</div>
+
+<!-- Metric cards -->
+<div class="cards-grid">
+  <div class="metric-card">
+    <div class="metric-num">{{ stats.new_leads }}</div>
+    <div class="metric-label">New Leads</div>
+  </div>
+  <div class="metric-card {% if stats.unreplied_leads > 0 %}warn{% endif %}">
+    <div class="metric-num">{{ stats.unreplied_leads }}</div>
+    <div class="metric-label">Unreplied &gt;2h</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-num">{{ stats.todays_shoots }}</div>
+    <div class="metric-label">Today's Shoots</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-num">{{ stats.editing_pending }}</div>
+    <div class="metric-label">Editing Pending</div>
+  </div>
+  <div class="metric-card {% if stats.payments_pending > 0 %}warn{% endif %}">
+    <div class="metric-num">{{ stats.payments_pending }}</div>
+    <div class="metric-label">Payments Due</div>
+  </div>
+</div>
+
+<!-- Quick navigation -->
+<div class="section-head">
+  <span class="section-title">Quick access</span>
+</div>
+<div class="quick-nav">
+  <a href="/brands" class="quick-tile">
+    <div class="quick-tile-icon">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+        <rect x="2" y="7" width="16" height="11" rx="2"/>
+        <path d="M7 7V5.5a3 3 0 016 0V7"/>
+      </svg>
+    </div>
+    <div>
+      <div class="quick-tile-label">Brands</div>
+      <div class="quick-tile-sub">Manage shoots & payments</div>
+    </div>
+  </a>
+  <a href="/leads" class="quick-tile">
+    <div class="quick-tile-icon">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="10" cy="6" r="3"/>
+        <path d="M3 17a7 7 0 0114 0"/>
+      </svg>
+    </div>
+    <div>
+      <div class="quick-tile-label">Leads</div>
+      <div class="quick-tile-sub">Track & convert prospects</div>
+    </div>
+  </a>
+</div>
+{% endblock %}

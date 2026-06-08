@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Brands — Studio CRM{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Brands</h1>
+    <p class="page-subtitle">{{ brands | length }} brand{% if brands | length != 1 %}s{% endif %}</p>
+  </div>
+</div>
+
+<!-- Add brand form (collapsible) -->
+<details class="add-panel">
+  <summary class="btn btn-primary">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M10 4v12M4 10h12"/>
+    </svg>
+    Add Brand
+  </summary>
+  <div class="form-panel">
+    <form method="POST" action="/ui/brands">
+      <div class="form-grid">
+        <div class="field">
+          <label for="name">Brand name *</label>
+          <input type="text" id="name" name="name" placeholder="e.g. Maggie" required>
+        </div>
+        <div class="field">
+          <label for="instagram">Instagram handle</label>
+          <input type="text" id="instagram" name="instagram" placeholder="@handle">
+        </div>
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="contact@brand.com">
+        </div>
+        <div class="field full">
+          <label for="notes">Notes</label>
+          <textarea id="notes" name="notes" placeholder="Any context about this brand..."></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Brand</button>
+      </div>
+    </form>
+  </div>
+</details>
+
+<!-- Brands table -->
+{% if brands %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Instagram</th>
+        <th>Leads</th>
+        <th>Shoots</th>
+        <th>Payment</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for brand in brands %}
+      <tr>
+        <td class="td-name">
+          <a href="/brands/{{ brand.id }}">{{ brand.name }}</a>
+        </td>
+        <td class="td-muted">
+          {% if brand.instagram %}{{ brand.instagram }}{% else %}—{% endif %}
+        </td>
+        <td class="td-muted">{{ brand.leads | length }}</td>
+        <td class="td-muted">{{ brand.shoots | length }}</td>
+        <td>
+          {% if brand.payment_done %}
+            <span class="badge badge-converted">Received</span>
+          {% else %}
+            <span class="badge badge-closed">Pending</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div>No brands yet. Add your first brand above.</div>
+</div>
+{% endif %}
+{% endblock %}
