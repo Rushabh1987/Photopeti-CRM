@@ -55,7 +55,7 @@ Re-evaluated every 15 min; repeats until the owner resolves the condition (no ma
 - **Done when:** `uvicorn app.main:app` runs, `/health` returns ok, `uv run pytest` passes, DB + all tables auto-create at `./data/crm.db`.
 - **Note:** models, schemas, and config were refactored in Step 0 (session 2) to match the final design — Brand replaces Client, Shoot simplified, EditingTask removed, Telegram replaced with WhatsApp.
 
-### Part 2 — Core CRUD + dashboard data
+### Part 2 — Core CRUD + dashboard data ✅ (done)
 
 - **Goal:** manage brands, leads, and shoots manually; compute dashboard counts.
 - **Files:** `services/brands.py`, `services/leads.py`, `services/shoots.py`; `routes/brands.py`, `routes/leads.py`, `routes/shoots.py`, `routes/dashboard.py`; wire routers in `main.py`.
