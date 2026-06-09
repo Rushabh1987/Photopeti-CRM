@@ -117,11 +117,13 @@ def create_shoot_ui(
 @router.post("/ui/leads", response_class=HTMLResponse)
 def create_lead_ui(
     brand_id: str = Form(""),
+    instagram_handle: str = Form(""),
     source: str = Form("manual"),
     db: Session = Depends(get_db),
 ):
     bid = int(brand_id) if brand_id else None
-    svc_leads.create_lead(db, LeadCreate(brand_id=bid, source=source))
+    handle = instagram_handle.lstrip("@").strip() or None
+    svc_leads.create_lead(db, LeadCreate(brand_id=bid, instagram_handle=handle, source=source))
     return RedirectResponse(url="/leads", status_code=303)
 
 
@@ -156,7 +158,12 @@ def update_lead_status(
     db: Session = Depends(get_db),
 ):
     updated = svc_leads.update_lead(db, lead_id, LeadUpdate(status=status))
-    brand_name = updated.brand.name if updated.brand else None
+    if updated.brand:
+        brand_name = updated.brand.name
+    elif updated.instagram_handle:
+        brand_name = "@" + updated.instagram_handle
+    else:
+        brand_name = None
     return templates.TemplateResponse(
         request, "partials/lead_row.html", {"lead": updated, "brand_name": brand_name}
     )

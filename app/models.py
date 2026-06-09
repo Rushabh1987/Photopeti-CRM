@@ -45,6 +45,7 @@ class Lead(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     tenant_id: Mapped[int] = mapped_column(default=DEFAULT_TENANT, index=True)
     brand_id: Mapped[int | None] = mapped_column(ForeignKey("brands.id"), default=None)
+    instagram_handle: Mapped[str | None] = mapped_column(String(120), default=None, index=True)
     source: Mapped[str] = mapped_column(String(20))                             # LEAD_SOURCES
     status: Mapped[str] = mapped_column(String(20), default="new", index=True)  # LEAD_STATUSES
     first_contact_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

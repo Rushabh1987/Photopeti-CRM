@@ -21,9 +21,13 @@
     <form method="POST" action="/ui/leads">
       <div class="form-grid">
         <div class="field">
-          <label for="brand_id">Brand</label>
+          <label for="instagram_handle">Instagram handle</label>
+          <input type="text" id="instagram_handle" name="instagram_handle" placeholder="@brandname">
+        </div>
+        <div class="field">
+          <label for="brand_id">Link to brand (if converted)</label>
           <select id="brand_id" name="brand_id">
-            <option value="">No brand</option>
+            <option value="">No brand yet</option>
             {% for b in brand_list %}
               <option value="{{ b.id }}">{{ b.name }}</option>
             {% endfor %}
@@ -59,7 +63,13 @@
     </thead>
     <tbody>
       {% for lead in leads %}
-        {% set brand_name = brands.get(lead.brand_id, '—') if lead.brand_id else '—' %}
+        {% if lead.brand_id %}
+          {% set brand_name = brands.get(lead.brand_id, '—') %}
+        {% elif lead.instagram_handle %}
+          {% set brand_name = '@' + lead.instagram_handle %}
+        {% else %}
+          {% set brand_name = '—' %}
+        {% endif %}
         {% include "partials/lead_row.html" %}
       {% endfor %}
     </tbody>

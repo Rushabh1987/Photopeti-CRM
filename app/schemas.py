@@ -42,6 +42,7 @@ class BrandUpdate(BaseModel):
 class LeadOut(ORMModel):
     id: int
     brand_id: int | None = None
+    instagram_handle: str | None = None
     source: str
     status: str
     first_contact_at: datetime
@@ -50,12 +51,14 @@ class LeadOut(ORMModel):
 
 class LeadCreate(BaseModel):
     brand_id: int | None = None
+    instagram_handle: str | None = None
     source: str = "manual"
     status: str = "new"
 
 
 class LeadUpdate(BaseModel):
     brand_id: int | None = None
+    instagram_handle: str | None = None
     status: str | None = None
 
 
