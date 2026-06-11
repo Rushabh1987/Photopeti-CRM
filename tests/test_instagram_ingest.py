@@ -68,3 +68,28 @@ def test_known_brand_sender_appends_message(db_session):
     assert result.id == lead.id
     assert db_session.query(Lead).count() == 1
     assert db_session.query(Message).count() == 1
+
+
+def test_keyword_match_requires_word_boundary(db_session):
+    """'rate' inside 'moderate' should not trigger a lead creation."""
+    result = upsert_from_instagram(db_session, "someuser", "I will moderate the event", "{}")
+    assert result is None
+    assert db_session.query(Lead).count() == 0
+
+
+def test_lead_lookup_wins_over_brand_lookup(db_session):
+    """Lead-table path takes priority over brand-table path."""
+    brand = Brand(name="Dual Brand", instagram="dualbrand")
+    db_session.add(brand)
+    db_session.flush()
+    brand_lead = Lead(brand_id=brand.id, source="manual", status="converted")
+    db_session.add(brand_lead)
+    instagram_lead = Lead(instagram_handle="dualbrand", source="instagram", status="new")
+    db_session.add(instagram_lead)
+    db_session.commit()
+
+    result = upsert_from_instagram(db_session, "dualbrand", "following up", "{}")
+
+    assert result is not None
+    assert result.id == instagram_lead.id  # lead-table path wins
+    assert db_session.query(Message).count() == 1

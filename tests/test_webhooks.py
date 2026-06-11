@@ -68,6 +68,18 @@ def test_instagram_webhook_post_skips_on_none_handle():
     mock_upsert.assert_not_called()
 
 
+def test_instagram_verify_empty_token_rejected():
+    """Empty META_VERIFY_TOKEN must never pass verification."""
+    with patch("app.routes.webhooks.settings") as mock_settings:
+        mock_settings.meta_verify_token = ""
+        response = client.get("/webhooks/instagram", params={
+            "hub.mode": "subscribe",
+            "hub.verify_token": "",
+            "hub.challenge": "challenge123",
+        })
+    assert response.status_code == 403
+
+
 def test_instagram_webhook_post_returns_200_on_exception():
     """Even if upsert raises, the route must return 200 (Meta retries on non-200)."""
     payload = {"object": "instagram", "entry": []}

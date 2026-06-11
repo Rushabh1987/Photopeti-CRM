@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 from sqlalchemy.orm import Session
@@ -92,4 +93,5 @@ _KEYWORDS: list[str] = [k.strip() for k in settings.lead_keywords.split(",")]
 
 
 def _keyword_match(text: str) -> bool:
-    return any(kw in text.lower() for kw in _KEYWORDS)
+    text_lower = text.lower()
+    return any(re.search(r"\b" + re.escape(kw) + r"\b", text_lower) for kw in _KEYWORDS)

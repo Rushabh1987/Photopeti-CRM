@@ -20,7 +20,9 @@ def instagram_verify(
     hub_verify_token: str = Query(default="", alias="hub.verify_token"),
     hub_challenge: str = Query(default="", alias="hub.challenge"),
 ):
-    if hub_mode == "subscribe" and hub_verify_token == settings.meta_verify_token:
+    if (hub_mode == "subscribe"
+            and settings.meta_verify_token
+            and hub_verify_token == settings.meta_verify_token):
         return PlainTextResponse(hub_challenge)
     return Response(status_code=403)
 
