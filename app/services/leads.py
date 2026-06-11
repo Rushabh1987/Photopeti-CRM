@@ -2,7 +2,8 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from app.models import Lead
+from app.config import settings
+from app.models import Brand, Lead, Message
 from app.schemas import LeadCreate, LeadUpdate
 
 
@@ -32,3 +33,58 @@ def update_lead(db: Session, lead_id: int, data: LeadUpdate) -> Lead | None:
     db.commit()
     db.refresh(lead)
     return lead
+
+
+def upsert_from_instagram(db: Session, handle: str, text: str, raw: str) -> Lead | None:
+    """3-step lookup: existing lead → existing brand → unknown+keyword filter."""
+    lead = _find_lead_by_handle(db, handle)
+    if lead:
+        _append_message(db, lead, text, raw)
+        return lead
+
+    brand = _find_brand_by_handle(db, handle)
+    if brand:
+        latest_lead = (
+            db.query(Lead)
+            .filter(Lead.brand_id == brand.id)
+            .order_by(Lead.created_at.desc())
+            .first()
+        )
+        if latest_lead:
+            _append_message(db, latest_lead, text, raw)
+            return latest_lead
+
+    if _keyword_match(text):
+        new_lead = Lead(instagram_handle=handle, source="instagram", status="new")
+        db.add(new_lead)
+        db.flush()
+        _append_message(db, new_lead, text, raw)
+        db.commit()
+        db.refresh(new_lead)
+        return new_lead
+
+    return None
+
+
+def _find_lead_by_handle(db: Session, handle: str) -> Lead | None:
+    return (
+        db.query(Lead)
+        .filter(Lead.instagram_handle == handle)
+        .order_by(Lead.created_at.desc())
+        .first()
+    )
+
+
+def _find_brand_by_handle(db: Session, handle: str) -> Brand | None:
+    return db.query(Brand).filter(Brand.instagram == handle).first()
+
+
+def _append_message(db: Session, lead: Lead, text: str, raw: str) -> None:
+    db.add(Message(lead_id=lead.id, direction="in", channel="instagram", body=text, raw=raw))
+    lead.last_activity_at = datetime.utcnow()
+    db.commit()
+
+
+def _keyword_match(text: str) -> bool:
+    keywords = [k.strip() for k in settings.lead_keywords.split(",")]
+    return any(kw in text.lower() for kw in keywords)
