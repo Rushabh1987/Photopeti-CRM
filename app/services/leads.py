@@ -53,6 +53,7 @@ def upsert_from_instagram(db: Session, handle: str, text: str, raw: str) -> Lead
         if latest_lead:
             _append_message(db, latest_lead, text, raw)
             return latest_lead
+        return None  # known brand, no lead yet — do not treat as unknown sender
 
     if _keyword_match(text):
         new_lead = Lead(instagram_handle=handle, source="instagram", status="new")

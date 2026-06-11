@@ -42,6 +42,18 @@ def test_known_lead_sender_appends_message(db_session):
     assert msg.lead_id == existing.id
 
 
+def test_known_brand_with_no_leads_ignored(db_session):
+    brand = Brand(name="New Brand", instagram="newbrandig")
+    db_session.add(brand)
+    db_session.commit()
+
+    result = upsert_from_instagram(db_session, "newbrandig", "I want to book a shoot", "{}")
+
+    assert result is None
+    assert db_session.query(Lead).count() == 0
+    assert db_session.query(Message).count() == 0
+
+
 def test_known_brand_sender_appends_message(db_session):
     brand = Brand(name="Acme Foods", instagram="acmefoods")
     db_session.add(brand)
