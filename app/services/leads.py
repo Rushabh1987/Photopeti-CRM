@@ -40,6 +40,7 @@ def upsert_from_instagram(db: Session, handle: str, text: str, raw: str) -> Lead
     lead = _find_lead_by_handle(db, handle)
     if lead:
         _append_message(db, lead, text, raw)
+        db.commit()
         return lead
 
     brand = _find_brand_by_handle(db, handle)
@@ -52,6 +53,7 @@ def upsert_from_instagram(db: Session, handle: str, text: str, raw: str) -> Lead
         )
         if latest_lead:
             _append_message(db, latest_lead, text, raw)
+            db.commit()
             return latest_lead
         return None  # known brand, no lead yet — do not treat as unknown sender
 
@@ -83,9 +85,11 @@ def _find_brand_by_handle(db: Session, handle: str) -> Brand | None:
 def _append_message(db: Session, lead: Lead, text: str, raw: str) -> None:
     db.add(Message(lead_id=lead.id, direction="in", channel="instagram", body=text, raw=raw))
     lead.last_activity_at = datetime.utcnow()
-    db.commit()
+    # caller owns the transaction
+
+
+_KEYWORDS: list[str] = [k.strip() for k in settings.lead_keywords.split(",")]
 
 
 def _keyword_match(text: str) -> bool:
-    keywords = [k.strip() for k in settings.lead_keywords.split(",")]
-    return any(kw in text.lower() for kw in keywords)
+    return any(kw in text.lower() for kw in _KEYWORDS)
