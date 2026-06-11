@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.db import init_db
-from app.routes import brands, dashboard, leads, shoots, ui
+from app.routes import brands, dashboard, leads, shoots, ui, webhooks
 
 
 @asynccontextmanager
@@ -30,6 +30,7 @@ app.include_router(brands.router)
 app.include_router(leads.router)
 app.include_router(shoots.router)
 app.include_router(dashboard.router)
+app.include_router(webhooks.router)
 
 
 @app.get("/health")
