@@ -55,3 +55,14 @@ def test_get_sender_handle_returns_none_on_error():
     with patch("app.services.instagram.httpx.get", side_effect=Exception("network error")):
         result = get_sender_handle("9999")
     assert result is None
+
+
+def test_get_sender_handle_returns_none_on_http_error():
+    import httpx as httpx_lib
+    mock_resp = MagicMock()
+    mock_resp.raise_for_status.side_effect = httpx_lib.HTTPStatusError(
+        "403", request=MagicMock(), response=MagicMock()
+    )
+    with patch("app.services.instagram.httpx.get", return_value=mock_resp):
+        result = get_sender_handle("9999")
+    assert result is None

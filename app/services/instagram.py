@@ -17,7 +17,10 @@ def parse_webhook(payload: dict) -> list[tuple[str, str, str]]:
         for item in entry.get("messaging", []):
             if "message" not in item:
                 continue
-            igsid = item["sender"]["id"]
+            sender = item.get("sender", {})
+            igsid = sender.get("id")
+            if not igsid:
+                continue
             text = item["message"].get("text", "")
             raw = json.dumps(item)
             results.append((igsid, text, raw))
