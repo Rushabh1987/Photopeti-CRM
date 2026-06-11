@@ -1,8 +1,39 @@
-"""Instagram Messaging API integration (Phase 2).
+"""Instagram Messaging API integration."""
+import json
+import logging
 
-verify_token(...)         -> Meta GET handshake
-parse_webhook(payload)    -> normalized (sender, text, raw)
-send_reply(recipient, text) -> POST to Graph API (24h window applies)
-Requires a Professional account + Facebook Page + approved Meta app.
-"""
-# TODO(Phase 2)
+import httpx
+
+from app.config import settings
+
+logger = logging.getLogger(__name__)
+_GRAPH_URL = "https://graph.facebook.com/v21.0"
+
+
+def parse_webhook(payload: dict) -> list[tuple[str, str, str]]:
+    """Extract (igsid, text, raw_json) tuples from a Meta webhook payload."""
+    results = []
+    for entry in payload.get("entry", []):
+        for item in entry.get("messaging", []):
+            if "message" not in item:
+                continue
+            igsid = item["sender"]["id"]
+            text = item["message"].get("text", "")
+            raw = json.dumps(item)
+            results.append((igsid, text, raw))
+    return results
+
+
+def get_sender_handle(igsid: str) -> str | None:
+    """Resolve an Instagram-Scoped User ID to a username via Graph API."""
+    try:
+        resp = httpx.get(
+            f"{_GRAPH_URL}/{igsid}",
+            params={"fields": "username", "access_token": settings.instagram_access_token},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return resp.json().get("username")
+    except Exception as exc:
+        logger.warning("Failed to resolve IGSID %s: %s", igsid, exc)
+        return None
