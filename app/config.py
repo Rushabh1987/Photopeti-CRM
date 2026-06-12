@@ -22,5 +22,10 @@ class Settings(BaseSettings):
     whatsapp_template_name: str = "lead_reminder"
     lead_keywords: str = "book,booking,shoot,photography,food shoot,rate,rates,price,pricing,available,availability,hire,quote,inquiry,package,how much,cost,interested,collaboration,project"
 
+    # App auth
+    app_secret_key: str = "change-this-in-production"
+    app_username: str = "admin"
+    app_password: str = "changeme"
+
 
 settings = Settings()

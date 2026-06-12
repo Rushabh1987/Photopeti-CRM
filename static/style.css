@@ -139,6 +139,40 @@ button, input, select, textarea { font-family: inherit; }
   .bnav-item:hover  { color: var(--text-2); }
 }
 
+/* --- Logout --- */
+.sidebar-logout {
+  padding: 0.5rem 0.75rem 1.25rem;
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+}
+.logout-btn {
+  display: flex; align-items: center; gap: 0.6rem;
+  width: 100%; background: none; border: none;
+  border-radius: var(--radius);
+  color: var(--text-3);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.875rem; font-weight: 500;
+  padding: 0.55rem 0.875rem;
+  transition: background var(--transition), color var(--transition);
+}
+.logout-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.logout-btn:hover { background: var(--surface-2); color: var(--text); }
+
+.topbar-logout {
+  margin-left: auto;
+  background: none; border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  padding: 0.4rem;
+  display: flex; align-items: center;
+  border-radius: var(--radius);
+  transition: color var(--transition);
+}
+.topbar-logout svg { width: 20px; height: 20px; }
+.topbar-logout:hover { color: var(--text); }
+
 /* --- Page header --- */
 .page-header {
   display: flex; align-items: flex-start; justify-content: space-between;
