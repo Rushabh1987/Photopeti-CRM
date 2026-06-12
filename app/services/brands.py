@@ -35,3 +35,16 @@ def update_brand(db: Session, brand_id: int, data: BrandUpdate) -> Brand | None:
     db.commit()
     db.refresh(brand)
     return brand
+
+
+def delete_brand(db: Session, brand_id: int) -> bool:
+    brand = get_brand(db, brand_id)
+    if not brand:
+        return False
+    for lead in brand.leads:
+        db.delete(lead)   # Lead.messages cascades automatically
+    for shoot in brand.shoots:
+        db.delete(shoot)
+    db.delete(brand)
+    db.commit()
+    return True

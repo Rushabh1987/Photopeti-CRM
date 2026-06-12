@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Lead — {{ brand_name or 'Unknown' }} — Studio CRM{% endblock %}
+
+{% block content %}
+<a href="/leads" class="back-link">
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 5l-5 5 5 5"/>
+  </svg>
+  Leads
+</a>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">{{ brand_name or '—' }}</h1>
+    <p class="page-subtitle">Lead detail</p>
+  </div>
+  <div style="display:flex;gap:.5rem;align-items:center">
+    <a href="/leads/{{ lead.id }}/edit" class="btn btn-ghost">Edit</a>
+    <form method="post" action="/ui/leads/{{ lead.id }}/delete"
+          onsubmit="return confirm('Delete this lead and all its messages? This cannot be undone.')">
+      <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+  </div>
+</div>
+
+<!-- Lead info -->
+<div class="detail-grid">
+  <div class="detail-item">
+    <span class="detail-label">Status</span>
+    <span class="badge badge-{{ lead.status }}">{{ lead.status | replace('_', ' ') | title }}</span>
+  </div>
+  <div class="detail-item">
+    <span class="detail-label">Source</span>
+    <span class="badge badge-{{ lead.source }}">{{ lead.source }}</span>
+  </div>
+  {% if lead.instagram_handle %}
+  <div class="detail-item">
+    <span class="detail-label">Instagram</span>
+    <span class="detail-value">@{{ lead.instagram_handle }}</span>
+  </div>
+  {% endif %}
+  {% if lead.brand %}
+  <div class="detail-item">
+    <span class="detail-label">Brand</span>
+    <a href="/brands/{{ lead.brand.id }}" class="detail-value detail-link">{{ lead.brand.name }}</a>
+  </div>
+  {% endif %}
+  <div class="detail-item">
+    <span class="detail-label">First contact</span>
+    <span class="detail-value">{{ lead.first_contact_at.strftime('%d %b %Y, %H:%M') }}</span>
+  </div>
+  <div class="detail-item">
+    <span class="detail-label">Last activity</span>
+    <span class="detail-value">{{ lead.last_activity_at.strftime('%d %b %Y, %H:%M') }}</span>
+  </div>
+</div>
+
+<!-- Message history -->
+{% if lead.messages %}
+<div class="section-head" style="margin-top:2rem">
+  <span class="section-title">Messages</span>
+</div>
+<div class="messages-list">
+  {% for msg in lead.messages | sort(attribute='created_at') %}
+  <div class="msg msg-{{ msg.direction }}">
+    <div class="msg-meta">
+      <span class="msg-dir">{{ 'Received' if msg.direction == 'in' else 'Sent' }}</span>
+      <span class="msg-time">{{ msg.created_at.strftime('%d %b %Y, %H:%M') }}</span>
+    </div>
+    <div class="msg-body">{{ msg.body or '(no text)' }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="margin-top:2rem">No messages recorded for this lead.</div>
+{% endif %}
+{% endblock %}

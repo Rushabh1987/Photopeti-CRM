@@ -65,6 +65,17 @@ def brand_detail_page(request: Request, brand_id: int, db: Session = Depends(get
     )
 
 
+@router.get("/brands/{brand_id}/edit", response_class=HTMLResponse)
+def brand_edit_page(request: Request, brand_id: int, db: Session = Depends(get_db)):
+    brand = svc_brands.get_brand(db, brand_id)
+    if not brand:
+        return RedirectResponse(url="/brands")
+    return templates.TemplateResponse(
+        request, "brand_edit.html",
+        {"brand": brand, "active": "brands"},
+    )
+
+
 @router.get("/leads", response_class=HTMLResponse)
 def leads_page(request: Request, q: str = "", status: str = "", db: Session = Depends(get_db)):
     leads = svc_leads.list_leads(db, q=q, status=status)
@@ -81,6 +92,32 @@ def leads_page(request: Request, q: str = "", status: str = "", db: Session = De
     if request.headers.get("HX-Request"):
         return templates.TemplateResponse(request, "partials/leads_results.html", ctx)
     return templates.TemplateResponse(request, "leads.html", ctx)
+
+
+@router.get("/leads/{lead_id}", response_class=HTMLResponse)
+def lead_detail_page(request: Request, lead_id: int, db: Session = Depends(get_db)):
+    lead = svc_leads.get_lead(db, lead_id)
+    if not lead:
+        return RedirectResponse(url="/leads")
+    brand_name = lead.brand.name if lead.brand else (
+        "@" + lead.instagram_handle if lead.instagram_handle else None
+    )
+    return templates.TemplateResponse(
+        request, "lead_detail.html",
+        {"lead": lead, "brand_name": brand_name, "active": "leads"},
+    )
+
+
+@router.get("/leads/{lead_id}/edit", response_class=HTMLResponse)
+def lead_edit_page(request: Request, lead_id: int, db: Session = Depends(get_db)):
+    lead = svc_leads.get_lead(db, lead_id)
+    if not lead:
+        return RedirectResponse(url="/leads")
+    brand_objs = svc_brands.list_brands(db)
+    return templates.TemplateResponse(
+        request, "lead_edit.html",
+        {"lead": lead, "brand_list": brand_objs, "active": "leads"},
+    )
 
 
 # ── Form submissions (POST → redirect) ──────────────────────────────────────
@@ -175,3 +212,55 @@ def update_lead_status(
     return templates.TemplateResponse(
         request, "partials/lead_row.html", {"lead": updated, "brand_name": brand_name}
     )
+
+
+# ── Edit / delete ────────────────────────────────────────────────────────────
+
+@router.post("/ui/brands/{brand_id}/edit", response_class=HTMLResponse)
+def edit_brand_ui(
+    brand_id: int,
+    name: str = Form(...),
+    instagram: str = Form(""),
+    phone: str = Form(""),
+    email: str = Form(""),
+    notes: str = Form(""),
+    db: Session = Depends(get_db),
+):
+    svc_brands.update_brand(db, brand_id, BrandUpdate(
+        name=name,
+        instagram=instagram or None,
+        phone=phone or None,
+        email=email or None,
+        notes=notes or None,
+    ))
+    return RedirectResponse(url=f"/brands/{brand_id}", status_code=303)
+
+
+@router.post("/ui/brands/{brand_id}/delete", response_class=HTMLResponse)
+def delete_brand_ui(brand_id: int, db: Session = Depends(get_db)):
+    svc_brands.delete_brand(db, brand_id)
+    return RedirectResponse(url="/brands", status_code=303)
+
+
+@router.post("/ui/leads/{lead_id}/edit", response_class=HTMLResponse)
+def edit_lead_ui(
+    lead_id: int,
+    instagram_handle: str = Form(""),
+    brand_id: str = Form(""),
+    status: str = Form(...),
+    db: Session = Depends(get_db),
+):
+    bid = int(brand_id) if brand_id else None
+    handle = instagram_handle.lstrip("@").strip() or None
+    svc_leads.update_lead(db, lead_id, LeadUpdate(
+        instagram_handle=handle,
+        brand_id=bid,
+        status=status,
+    ))
+    return RedirectResponse(url=f"/leads/{lead_id}", status_code=303)
+
+
+@router.post("/ui/leads/{lead_id}/delete", response_class=HTMLResponse)
+def delete_lead_ui(lead_id: int, db: Session = Depends(get_db)):
+    svc_leads.delete_lead(db, lead_id)
+    return RedirectResponse(url="/leads", status_code=303)

@@ -49,6 +49,15 @@ def update_lead(db: Session, lead_id: int, data: LeadUpdate) -> Lead | None:
     return lead
 
 
+def delete_lead(db: Session, lead_id: int) -> bool:
+    lead = get_lead(db, lead_id)
+    if not lead:
+        return False
+    db.delete(lead)   # Lead.messages cascades automatically
+    db.commit()
+    return True
+
+
 def upsert_from_instagram(db: Session, handle: str, text: str, raw: str) -> Lead | None:
     """3-step lookup: existing lead → existing brand → unknown+keyword filter."""
     lead = _find_lead_by_handle(db, handle)

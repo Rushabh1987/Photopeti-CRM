@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ brand.name }} — Studio CRM{% endblock %}
+
+{% block content %}
+<a href="/brands/{{ brand.id }}" class="back-link">
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 5l-5 5 5 5"/>
+  </svg>
+  {{ brand.name }}
+</a>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Edit Brand</h1>
+    <p class="page-subtitle">{{ brand.name }}</p>
+  </div>
+</div>
+
+<div class="form-card">
+  <form method="POST" action="/ui/brands/{{ brand.id }}/edit">
+    <div class="form-grid">
+      <div class="field">
+        <label for="name">Brand name *</label>
+        <input type="text" id="name" name="name" value="{{ brand.name }}" required>
+      </div>
+      <div class="field">
+        <label for="instagram">Instagram handle</label>
+        <input type="text" id="instagram" name="instagram" value="{{ brand.instagram or '' }}" placeholder="@handle">
+      </div>
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="phone" value="{{ brand.phone or '' }}" placeholder="+91 98765 43210">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ brand.email or '' }}" placeholder="contact@brand.com">
+      </div>
+      <div class="field full">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" placeholder="Any context about this brand...">{{ brand.notes or '' }}</textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <a href="/brands/{{ brand.id }}" class="btn btn-ghost">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

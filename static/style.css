@@ -519,6 +519,97 @@ select.status-select option { background: var(--surface-2); color: var(--text); 
   border-color: rgba(74,222,128,.22);
   color: var(--green);
 }
+.payment-area.payment-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.payment-area.payment-disabled:hover { border-color: var(--border); }
+
+/* --- Action icon buttons --- */
+.td-actions { white-space: nowrap; width: 1%; }
+.td-actions form { display: inline; }
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: var(--radius);
+  border: none;
+  background: none;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  vertical-align: middle;
+  text-decoration: none;
+}
+.btn-icon svg { width: 14px; height: 14px; }
+.btn-icon:hover { background: var(--surface-2); color: var(--text); }
+.btn-icon-danger:hover { background: var(--red-dim); color: var(--red); }
+
+/* --- Danger button --- */
+.btn-danger {
+  background: var(--red-dim);
+  border: 1px solid rgba(248,113,113,.2);
+  border-radius: var(--radius);
+  color: var(--red);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.45rem 0.9rem;
+  transition: background var(--transition);
+}
+.btn-danger:hover { background: rgba(248,113,113,.18); }
+
+/* --- Form card (edit pages) --- */
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 1.5rem;
+  max-width: 640px;
+}
+
+/* --- Lead detail --- */
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.detail-label {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.detail-value { font-size: 0.9rem; color: var(--text); }
+.detail-link { color: var(--accent); }
+.detail-link:hover { text-decoration: underline; }
+
+/* --- Messages --- */
+.messages-list { display: flex; flex-direction: column; gap: 0.75rem; max-width: 640px; }
+.msg {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.msg-in  { background: var(--surface); }
+.msg-out { background: var(--accent-dim); border-color: rgba(217,119,6,.2); }
+.msg-meta {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+.msg-dir  { font-size: 0.72rem; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; }
+.msg-time { font-size: 0.72rem; color: var(--text-3); }
+.msg-body { font-size: 0.875rem; color: var(--text); line-height: 1.5; }
 
 /* --- Empty state --- */
 .empty-state {

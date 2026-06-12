@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Edit Lead — Studio CRM{% endblock %}
+
+{% block content %}
+<a href="/leads/{{ lead.id }}" class="back-link">
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 5l-5 5 5 5"/>
+  </svg>
+  Lead detail
+</a>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Edit Lead</h1>
+  </div>
+</div>
+
+<div class="form-card">
+  <form method="POST" action="/ui/leads/{{ lead.id }}/edit">
+    <div class="form-grid">
+      <div class="field">
+        <label for="instagram_handle">Instagram handle</label>
+        <input type="text" id="instagram_handle" name="instagram_handle"
+               value="{{ lead.instagram_handle or '' }}" placeholder="@brandname">
+      </div>
+      <div class="field">
+        <label for="brand_id">Linked brand</label>
+        <select id="brand_id" name="brand_id">
+          <option value="">No brand linked</option>
+          {% for b in brand_list %}
+            <option value="{{ b.id }}" {% if lead.brand_id == b.id %}selected{% endif %}>
+              {{ b.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="status">Status</label>
+        <select id="status" name="status">
+          {% for s in ['new', 'replied', 'converted', 'closed'] %}
+            <option value="{{ s }}" {% if lead.status == s %}selected{% endif %}>
+              {{ s | replace('_', ' ') | title }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <a href="/leads/{{ lead.id }}" class="btn btn-ghost">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
