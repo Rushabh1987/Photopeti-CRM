@@ -1,0 +1,5 @@
+# Replace with your actual domain (e.g., crm.photopeti.com)
+# Point this domain's DNS A record to your server's IP before deploying.
+your-domain.com {
+    reverse_proxy app:8000
+}
