@@ -8,7 +8,8 @@ Reminders stop automatically once the lead status changes — no cancellation ne
 import logging
 from datetime import datetime, timedelta
 
-from sqlalchemy.orm import Session
+from sqlalchemy import func
+from sqlalchemy.orm import Session, joinedload
 
 from app.models import Lead, Reminder
 from app.services.whatsapp import send_lead_reminder
@@ -29,18 +30,31 @@ def _lead_unreplied_2h(db: Session) -> None:
 
     stale_leads = (
         db.query(Lead)
+        .options(joinedload(Lead.brand))
         .filter(Lead.status == "new", Lead.first_contact_at <= cutoff)
         .all()
     )
 
-    for lead in stale_leads:
-        last_sent = (
-            db.query(Reminder)
-            .filter_by(entity_type="lead", entity_id=lead.id, rule_key=_RULE, status="sent")
-            .order_by(Reminder.sent_at.desc())
-            .first()
+    if not stale_leads:
+        return
+
+    # One query for all cooldown checks instead of one per lead
+    lead_ids = [lead.id for lead in stale_leads]
+    last_sent_map: dict[int, datetime] = dict(
+        db.query(Reminder.entity_id, func.max(Reminder.sent_at))
+        .filter(
+            Reminder.entity_type == "lead",
+            Reminder.entity_id.in_(lead_ids),
+            Reminder.rule_key == _RULE,
+            Reminder.status == "sent",
         )
-        if last_sent and last_sent.sent_at and last_sent.sent_at > cutoff:
+        .group_by(Reminder.entity_id)
+        .all()
+    )
+
+    for lead in stale_leads:
+        last_sent_at = last_sent_map.get(lead.id)
+        if last_sent_at and last_sent_at > cutoff:
             continue
 
         brand_name = lead.brand.name if lead.brand else f"Lead #{lead.id}"

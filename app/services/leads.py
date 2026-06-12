@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 
 from sqlalchemy import or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, contains_eager, joinedload
 
 from app.config import settings
 from app.models import Brand, Lead, Message
@@ -15,18 +15,27 @@ def list_leads(db: Session, q: str = "", status: str = "") -> list[Lead]:
         query = query.filter(Lead.status == status)
     if q:
         pattern = f"%{q}%"
+        # outerjoin for filtering + contains_eager reuses that join for loading brand
         query = (
             query.outerjoin(Brand, Lead.brand_id == Brand.id)
+            .options(contains_eager(Lead.brand))
             .filter(or_(
                 Brand.name.ilike(pattern),
                 Lead.instagram_handle.ilike(pattern),
             ))
         )
+    else:
+        query = query.options(joinedload(Lead.brand))
     return query.order_by(Lead.created_at.desc()).all()
 
 
 def get_lead(db: Session, lead_id: int) -> Lead | None:
-    return db.query(Lead).filter(Lead.id == lead_id).first()
+    return (
+        db.query(Lead)
+        .options(joinedload(Lead.brand))
+        .filter(Lead.id == lead_id)
+        .first()
+    )
 
 
 def create_lead(db: Session, data: LeadCreate) -> Lead:

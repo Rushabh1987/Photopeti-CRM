@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.models import Brand
+from app.models import Brand, Lead, Message, Shoot
 from app.schemas import BrandCreate, BrandUpdate
 
 
@@ -38,13 +38,16 @@ def update_brand(db: Session, brand_id: int, data: BrandUpdate) -> Brand | None:
 
 
 def delete_brand(db: Session, brand_id: int) -> bool:
-    brand = get_brand(db, brand_id)
-    if not brand:
+    if not get_brand(db, brand_id):
         return False
-    for lead in brand.leads:
-        db.delete(lead)   # Lead.messages cascades automatically
-    for shoot in brand.shoots:
-        db.delete(shoot)
-    db.delete(brand)
+    # Bulk deletes — one SQL statement each, no Python loops
+    lead_ids = [
+        row[0] for row in db.query(Lead.id).filter(Lead.brand_id == brand_id).all()
+    ]
+    if lead_ids:
+        db.query(Message).filter(Message.lead_id.in_(lead_ids)).delete(synchronize_session=False)
+        db.query(Lead).filter(Lead.brand_id == brand_id).delete(synchronize_session=False)
+    db.query(Shoot).filter(Shoot.brand_id == brand_id).delete(synchronize_session=False)
+    db.query(Brand).filter(Brand.id == brand_id).delete(synchronize_session=False)
     db.commit()
     return True

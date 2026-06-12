@@ -1,8 +1,10 @@
-<div id="payment-toggle" class="payment-area {% if brand.payment_done %}done{% endif %}">
+{% set no_shoots = brand.shoots | length == 0 %}
+<div id="payment-toggle" class="payment-area {% if brand.payment_done %}done{% endif %} {% if no_shoots %}payment-disabled{% endif %}">
   <input type="checkbox" class="toggle"
          {% if brand.payment_done %}checked{% endif %}
+         {% if no_shoots %}disabled title="Add a shoot before marking payment"{% else %}
          hx-post="/ui/brands/{{ brand.id }}/toggle-payment"
          hx-target="#payment-toggle"
-         hx-swap="outerHTML">
+         hx-swap="outerHTML"{% endif %}>
   <span>Payment {{ 'received' if brand.payment_done else 'pending' }}</span>
 </div>

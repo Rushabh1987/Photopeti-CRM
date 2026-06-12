@@ -65,7 +65,7 @@
   </div>
 
   <div class="filter-pills">
-    {% for val, label in [('', 'All'), ('new', 'New'), ('replied', 'Replied'), ('follow_up', 'Follow Up'), ('converted', 'Converted'), ('closed', 'Closed')] %}
+    {% for val, label in [('', 'All'), ('new', 'New'), ('replied', 'Replied'), ('converted', 'Converted'), ('closed', 'Closed')] %}
     <span class="filter-pill">
       <input type="radio" name="status" id="s-{{ val or 'all' }}" value="{{ val }}"
              {% if status == val %}checked{% endif %}>

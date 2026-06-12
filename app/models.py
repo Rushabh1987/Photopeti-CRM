@@ -6,7 +6,7 @@ migrations trivial; swap to native enums under Postgres later if desired.
 """
 from datetime import date, datetime
 
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, String, Text
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Index, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -33,7 +33,7 @@ class Brand(Base):
     email: Mapped[str | None] = mapped_column(String(200), default=None)
     notes: Mapped[str | None] = mapped_column(Text, default=None)
     payment_done: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
 
     leads: Mapped[list["Lead"]] = relationship(back_populates="brand")
     shoots: Mapped[list["Shoot"]] = relationship(back_populates="brand")
@@ -41,16 +41,20 @@ class Brand(Base):
 
 class Lead(Base):
     __tablename__ = "leads"
+    __table_args__ = (
+        # Covers reminder evaluation: WHERE status='new' AND first_contact_at <= cutoff
+        Index("ix_leads_status_first_contact", "status", "first_contact_at"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tenant_id: Mapped[int] = mapped_column(default=DEFAULT_TENANT, index=True)
-    brand_id: Mapped[int | None] = mapped_column(ForeignKey("brands.id"), default=None)
+    brand_id: Mapped[int | None] = mapped_column(ForeignKey("brands.id"), default=None, index=True)
     instagram_handle: Mapped[str | None] = mapped_column(String(120), default=None, index=True)
-    source: Mapped[str] = mapped_column(String(20))                             # LEAD_SOURCES
-    status: Mapped[str] = mapped_column(String(20), default="new", index=True)  # LEAD_STATUSES
+    source: Mapped[str] = mapped_column(String(20))
+    status: Mapped[str] = mapped_column(String(20), default="new", index=True)
     first_contact_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     last_activity_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
 
     brand: Mapped["Brand | None"] = relationship(back_populates="leads")
     messages: Mapped[list["Message"]] = relationship(
@@ -78,13 +82,13 @@ class Shoot(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tenant_id: Mapped[int] = mapped_column(default=DEFAULT_TENANT, index=True)
-    brand_id: Mapped[int] = mapped_column(ForeignKey("brands.id"))
-    type: Mapped[str] = mapped_column(String(10))               # SHOOT_TYPES
+    brand_id: Mapped[int] = mapped_column(ForeignKey("brands.id"), index=True)
+    type: Mapped[str] = mapped_column(String(10))
     description: Mapped[str | None] = mapped_column(Text, default=None)
-    shoot_date: Mapped[date | None] = mapped_column(Date, default=None)
+    shoot_date: Mapped[date | None] = mapped_column(Date, default=None, index=True)
     shoot_done: Mapped[bool] = mapped_column(Boolean, default=False)
     editing_done: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
 
     brand: Mapped["Brand"] = relationship(back_populates="shoots")
 
