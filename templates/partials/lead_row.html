@@ -1,5 +1,5 @@
 <tr id="lead-{{ lead.id }}">
-  <td class="td-name">{{ brand_name or '—' }}</td>
+  <td class="td-name"><a href="/leads/{{ lead.id }}">{{ brand_name or '—' }}</a></td>
   <td><span class="badge badge-{{ lead.source }}">{{ lead.source }}</span></td>
   <td>
     <select class="status-select s-{{ lead.status }}"
