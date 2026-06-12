@@ -172,27 +172,27 @@ def create_lead_ui(
     return RedirectResponse(url="/leads", status_code=303)
 
 
-# ── HTMX checkbox toggles ────────────────────────────────────────────────────
+# ── Checkbox toggles ─────────────────────────────────────────────────────────
 
-@router.post("/ui/shoots/{shoot_id}/toggle-shoot-done", response_class=HTMLResponse)
-def toggle_shoot_done(request: Request, shoot_id: int, db: Session = Depends(get_db)):
+@router.post("/ui/shoots/{shoot_id}/toggle-shoot-done")
+def toggle_shoot_done(shoot_id: int, db: Session = Depends(get_db)):
     shoot = svc_shoots.get_shoot(db, shoot_id)
-    updated = svc_shoots.update_shoot(db, shoot_id, ShootUpdate(shoot_done=not shoot.shoot_done))
-    return templates.TemplateResponse(request, "partials/shoot_row.html", {"shoot": updated})
+    svc_shoots.update_shoot(db, shoot_id, ShootUpdate(shoot_done=not shoot.shoot_done))
+    return RedirectResponse(url=f"/brands/{shoot.brand_id}", status_code=303)
 
 
-@router.post("/ui/shoots/{shoot_id}/toggle-editing-done", response_class=HTMLResponse)
-def toggle_editing_done(request: Request, shoot_id: int, db: Session = Depends(get_db)):
+@router.post("/ui/shoots/{shoot_id}/toggle-editing-done")
+def toggle_editing_done(shoot_id: int, db: Session = Depends(get_db)):
     shoot = svc_shoots.get_shoot(db, shoot_id)
-    updated = svc_shoots.update_shoot(db, shoot_id, ShootUpdate(editing_done=not shoot.editing_done))
-    return templates.TemplateResponse(request, "partials/shoot_row.html", {"shoot": updated})
+    svc_shoots.update_shoot(db, shoot_id, ShootUpdate(editing_done=not shoot.editing_done))
+    return RedirectResponse(url=f"/brands/{shoot.brand_id}", status_code=303)
 
 
-@router.post("/ui/brands/{brand_id}/toggle-payment", response_class=HTMLResponse)
-def toggle_payment(request: Request, brand_id: int, db: Session = Depends(get_db)):
+@router.post("/ui/brands/{brand_id}/toggle-payment")
+def toggle_payment(brand_id: int, db: Session = Depends(get_db)):
     brand = svc_brands.get_brand(db, brand_id)
-    updated = svc_brands.update_brand(db, brand_id, BrandUpdate(payment_done=not brand.payment_done))
-    return templates.TemplateResponse(request, "partials/payment_toggle.html", {"brand": updated})
+    svc_brands.update_brand(db, brand_id, BrandUpdate(payment_done=not brand.payment_done))
+    return RedirectResponse(url=f"/brands/{brand_id}", status_code=303)
 
 
 @router.post("/ui/leads/{lead_id}/status", response_class=HTMLResponse)

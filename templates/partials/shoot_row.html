@@ -1,21 +1,19 @@
-<tr id="shoot-{{ shoot.id }}" class="{% if shoot.shoot_done and shoot.editing_done %}row-done{% endif %}">
+<tr class="{% if shoot.shoot_done and shoot.editing_done %}row-done{% endif %}">
   <td>{{ shoot.description or '—' }}</td>
   <td><span class="badge badge-{{ shoot.type }}">{{ shoot.type }}</span></td>
   <td class="td-muted">
     {% if shoot.shoot_date %}{{ shoot.shoot_date.strftime('%d %b %Y') }}{% else %}—{% endif %}
   </td>
   <td>
-    <input type="checkbox" class="toggle"
-           {% if shoot.shoot_done %}checked{% endif %}
-           hx-post="/ui/shoots/{{ shoot.id }}/toggle-shoot-done"
-           hx-target="#shoot-{{ shoot.id }}"
-           hx-swap="outerHTML">
+    <form method="post" action="/ui/shoots/{{ shoot.id }}/toggle-shoot-done">
+      <input type="checkbox" class="toggle" {% if shoot.shoot_done %}checked{% endif %}
+             onchange="this.form.submit()">
+    </form>
   </td>
   <td>
-    <input type="checkbox" class="toggle"
-           {% if shoot.editing_done %}checked{% endif %}
-           hx-post="/ui/shoots/{{ shoot.id }}/toggle-editing-done"
-           hx-target="#shoot-{{ shoot.id }}"
-           hx-swap="outerHTML">
+    <form method="post" action="/ui/shoots/{{ shoot.id }}/toggle-editing-done">
+      <input type="checkbox" class="toggle" {% if shoot.editing_done %}checked{% endif %}
+             onchange="this.form.submit()">
+    </form>
   </td>
 </tr>
