@@ -5,7 +5,6 @@
 <div class="page-header">
   <div>
     <h1 class="page-title">Brands</h1>
-    <p class="page-subtitle">{{ brands | length }} brand{% if brands | length != 1 %}s{% endif %}</p>
   </div>
 </div>
 
@@ -48,45 +47,25 @@
   </div>
 </details>
 
-<!-- Brands table -->
-{% if brands %}
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr>
-        <th>Brand</th>
-        <th>Instagram</th>
-        <th>Leads</th>
-        <th>Shoots</th>
-        <th>Payment</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for brand in brands %}
-      <tr>
-        <td class="td-name">
-          <a href="/brands/{{ brand.id }}">{{ brand.name }}</a>
-        </td>
-        <td class="td-muted">
-          {% if brand.instagram %}{{ brand.instagram }}{% else %}—{% endif %}
-        </td>
-        <td class="td-muted">{{ brand.leads | length }}</td>
-        <td class="td-muted">{{ brand.shoots | length }}</td>
-        <td>
-          {% if brand.payment_done %}
-            <span class="badge badge-converted">Received</span>
-          {% else %}
-            <span class="badge badge-closed">Pending</span>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<!-- Search bar -->
+<div class="search-filter-bar"
+     hx-get="/brands"
+     hx-target="#brands-results"
+     hx-push-url="true"
+     hx-trigger="input delay:300ms from:input[name='q']"
+     hx-include="input[name='q']">
+  <div class="search-input-wrap">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7">
+      <circle cx="9" cy="9" r="5.5"/>
+      <path d="M13.5 13.5L17 17"/>
+    </svg>
+    <input class="search-input" name="q" type="search" value="{{ q }}"
+           placeholder="Search by name or Instagram handle…" autocomplete="off">
+  </div>
 </div>
-{% else %}
-<div class="empty-state">
-  <div>No brands yet. Add your first brand above.</div>
+
+<!-- Results -->
+<div id="brands-results">
+  {% include "partials/brands_results.html" %}
 </div>
-{% endif %}
 {% endblock %}

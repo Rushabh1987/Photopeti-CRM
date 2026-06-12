@@ -185,6 +185,82 @@ button, input, select, textarea { font-family: inherit; }
 }
 .page-subtitle { font-size: 0.8rem; color: var(--text-3); margin-top: 0.2rem; }
 
+/* --- Search & filter bar --- */
+.search-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+  flex-wrap: wrap;
+}
+
+.search-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 340px;
+}
+.search-input-wrap svg {
+  position: absolute;
+  left: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px; height: 14px;
+  color: var(--text-3);
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  padding: 0.52rem 0.85rem 0.52rem 2.1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.855rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+.search-input:focus { border-color: var(--accent); }
+.search-input::placeholder { color: var(--text-3); }
+.search-input::-webkit-search-cancel-button { display: none; }
+
+.filter-pills {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.filter-pill input[type="radio"] { display: none; }
+.filter-pill label {
+  display: block;
+  cursor: pointer;
+  padding: 0.28rem 0.75rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  font-size: 0.775rem;
+  font-weight: 500;
+  color: var(--text-2);
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+  white-space: nowrap;
+  user-select: none;
+}
+.filter-pill label:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.filter-pill input[type="radio"]:checked + label {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent-h);
+}
+
+.results-count {
+  font-size: 0.8rem;
+  color: var(--text-3);
+  margin-bottom: 0.75rem;
+}
+.results-query { color: var(--text-2); }
+
 /* --- Dashboard metric cards --- */
 .cards-grid {
   display: grid;

@@ -5,7 +5,6 @@
 <div class="page-header">
   <div>
     <h1 class="page-title">Leads</h1>
-    <p class="page-subtitle">{{ leads | length }} lead{% if leads | length != 1 %}s{% endif %}</p>
   </div>
 </div>
 
@@ -48,34 +47,36 @@
   </div>
 </details>
 
-<!-- Leads table -->
-{% if leads %}
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr>
-        <th>Brand</th>
-        <th>Source</th>
-        <th>Status</th>
-        <th>First contact</th>
-        <th>Last activity</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for lead in leads %}
-        {% if lead.brand_id %}
-          {% set brand_name = brands.get(lead.brand_id, '—') %}
-        {% elif lead.instagram_handle %}
-          {% set brand_name = '@' + lead.instagram_handle %}
-        {% else %}
-          {% set brand_name = '—' %}
-        {% endif %}
-        {% include "partials/lead_row.html" %}
-      {% endfor %}
-    </tbody>
-  </table>
+<!-- Search + filter bar -->
+<div class="search-filter-bar"
+     hx-get="/leads"
+     hx-target="#leads-results"
+     hx-push-url="true"
+     hx-trigger="input delay:300ms from:input[name='q'], change from:input[name='status']"
+     hx-include="input[name='q'], input[name='status']:checked">
+
+  <div class="search-input-wrap">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7">
+      <circle cx="9" cy="9" r="5.5"/>
+      <path d="M13.5 13.5L17 17"/>
+    </svg>
+    <input class="search-input" name="q" type="search" value="{{ q }}"
+           placeholder="Search by brand or Instagram handle…" autocomplete="off">
+  </div>
+
+  <div class="filter-pills">
+    {% for val, label in [('', 'All'), ('new', 'New'), ('replied', 'Replied'), ('follow_up', 'Follow Up'), ('converted', 'Converted'), ('closed', 'Closed')] %}
+    <span class="filter-pill">
+      <input type="radio" name="status" id="s-{{ val or 'all' }}" value="{{ val }}"
+             {% if status == val %}checked{% endif %}>
+      <label for="s-{{ val or 'all' }}">{{ label }}</label>
+    </span>
+    {% endfor %}
+  </div>
 </div>
-{% else %}
-<div class="empty-state">No leads yet. Add one above or wait for Instagram DMs.</div>
-{% endif %}
+
+<!-- Results -->
+<div id="leads-results">
+  {% include "partials/leads_results.html" %}
+</div>
 {% endblock %}

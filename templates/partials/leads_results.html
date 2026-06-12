@@ -1,0 +1,36 @@
+<p class="results-count">
+  {{ leads | length }} lead{% if leads | length != 1 %}s{% endif %}
+  {% if q %}<span class="results-query"> — "{{ q }}"</span>{% endif %}
+</p>
+
+{% if leads %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Brand / Handle</th>
+        <th>Source</th>
+        <th>Status</th>
+        <th>First contact</th>
+        <th>Last activity</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for lead in leads %}
+        {% if lead.brand_id %}
+          {% set brand_name = brands.get(lead.brand_id, '—') %}
+        {% elif lead.instagram_handle %}
+          {% set brand_name = '@' + lead.instagram_handle %}
+        {% else %}
+          {% set brand_name = '—' %}
+        {% endif %}
+        {% include "partials/lead_row.html" %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  {% if q or status %}No leads match your filter.{% else %}No leads yet. Add one above or wait for Instagram DMs.{% endif %}
+</div>
+{% endif %}

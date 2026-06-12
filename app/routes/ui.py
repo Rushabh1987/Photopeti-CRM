@@ -45,11 +45,12 @@ def dashboard_page(request: Request, db: Session = Depends(get_db)):
 
 
 @router.get("/brands", response_class=HTMLResponse)
-def brands_page(request: Request, db: Session = Depends(get_db)):
-    brands = svc_brands.list_brands(db)
-    return templates.TemplateResponse(
-        request, "brands.html", {"brands": brands, "active": "brands"}
-    )
+def brands_page(request: Request, q: str = "", db: Session = Depends(get_db)):
+    brands = svc_brands.list_brands(db, q=q)
+    ctx = {"brands": brands, "q": q, "active": "brands"}
+    if request.headers.get("HX-Request"):
+        return templates.TemplateResponse(request, "partials/brands_results.html", ctx)
+    return templates.TemplateResponse(request, "brands.html", ctx)
 
 
 @router.get("/brands/{brand_id}", response_class=HTMLResponse)
@@ -65,14 +66,21 @@ def brand_detail_page(request: Request, brand_id: int, db: Session = Depends(get
 
 
 @router.get("/leads", response_class=HTMLResponse)
-def leads_page(request: Request, db: Session = Depends(get_db)):
-    leads = svc_leads.list_leads(db)
+def leads_page(request: Request, q: str = "", status: str = "", db: Session = Depends(get_db)):
+    leads = svc_leads.list_leads(db, q=q, status=status)
     brand_objs = svc_brands.list_brands(db)
     brands = {b.id: b.name for b in brand_objs}
-    return templates.TemplateResponse(
-        request, "leads.html",
-        {"leads": leads, "brands": brands, "brand_list": brand_objs, "active": "leads"},
-    )
+    ctx = {
+        "leads": leads,
+        "brands": brands,
+        "brand_list": brand_objs,
+        "active": "leads",
+        "q": q,
+        "status": status,
+    }
+    if request.headers.get("HX-Request"):
+        return templates.TemplateResponse(request, "partials/leads_results.html", ctx)
+    return templates.TemplateResponse(request, "leads.html", ctx)
 
 
 # ── Form submissions (POST → redirect) ──────────────────────────────────────

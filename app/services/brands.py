@@ -4,8 +4,14 @@ from app.models import Brand
 from app.schemas import BrandCreate, BrandUpdate
 
 
-def list_brands(db: Session) -> list[Brand]:
-    return db.query(Brand).order_by(Brand.created_at.desc()).all()
+def list_brands(db: Session, q: str = "") -> list[Brand]:
+    query = db.query(Brand)
+    if q:
+        pattern = f"%{q}%"
+        query = query.filter(
+            Brand.name.ilike(pattern) | Brand.instagram.ilike(pattern)
+        )
+    return query.order_by(Brand.created_at.desc()).all()
 
 
 def get_brand(db: Session, brand_id: int) -> Brand | None:

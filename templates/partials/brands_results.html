@@ -1,0 +1,41 @@
+<p class="results-count">
+  {{ brands | length }} brand{% if brands | length != 1 %}s{% endif %}
+  {% if q %}<span class="results-query"> — "{{ q }}"</span>{% endif %}
+</p>
+
+{% if brands %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Instagram</th>
+        <th>Leads</th>
+        <th>Shoots</th>
+        <th>Payment</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for brand in brands %}
+      <tr>
+        <td class="td-name"><a href="/brands/{{ brand.id }}">{{ brand.name }}</a></td>
+        <td class="td-muted">{% if brand.instagram %}{{ brand.instagram }}{% else %}—{% endif %}</td>
+        <td class="td-muted">{{ brand.leads | length }}</td>
+        <td class="td-muted">{{ brand.shoots | length }}</td>
+        <td>
+          {% if brand.payment_done %}
+            <span class="badge badge-converted">Received</span>
+          {% else %}
+            <span class="badge badge-closed">Pending</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  {% if q %}No brands match "{{ q }}".{% else %}No brands yet. Add your first brand above.{% endif %}
+</div>
+{% endif %}
