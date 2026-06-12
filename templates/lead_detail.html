@@ -16,9 +16,10 @@
   </div>
   <div style="display:flex;gap:.5rem;align-items:center">
     <a href="/leads/{{ lead.id }}/edit" class="btn btn-ghost">Edit</a>
-    <form method="post" action="/ui/leads/{{ lead.id }}/delete"
-          onsubmit="return confirm('Delete this lead and all its messages? This cannot be undone.')">
-      <button type="submit" class="btn btn-danger">Delete</button>
+    <form method="post" action="/ui/leads/{{ lead.id }}/delete">
+      <button type="button" class="btn btn-danger"
+              data-message="Delete this lead and all its messages? This cannot be undone."
+              onclick="showDeleteModal(this)">Delete</button>
     </form>
   </div>
 </div>

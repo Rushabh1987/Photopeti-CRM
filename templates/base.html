@@ -107,5 +107,64 @@
   </nav>
 
   {% block scripts %}{% endblock %}
+
+  <!-- Delete confirmation modal -->
+  <div id="delete-modal" class="modal-overlay" hidden>
+    <div class="modal-card">
+      <div class="modal-icon">
+        <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="26" cy="26" r="26" fill="rgba(248,113,113,0.1)"/>
+          <path d="M15 20h22M20 20v-2a2 2 0 012-2h8a2 2 0 012 2v2M18 20l1.8 15h12.4L34 20"
+                stroke="#F87171" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M22 26v6M30 26v6"
+                stroke="#F87171" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h3 class="modal-title">Are you sure?</h3>
+      <p class="modal-message" id="delete-modal-msg"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="delete-cancel-btn">Cancel</button>
+        <button class="btn btn-danger" id="delete-confirm-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var _form = null;
+      var overlay = document.getElementById('delete-modal');
+      var msgEl   = document.getElementById('delete-modal-msg');
+      var confirmBtn = document.getElementById('delete-confirm-btn');
+      var cancelBtn  = document.getElementById('delete-cancel-btn');
+
+      window.showDeleteModal = function (btn) {
+        _form = btn.closest('form');
+        msgEl.textContent = btn.dataset.message || 'This action cannot be undone.';
+        overlay.removeAttribute('hidden');
+        document.body.style.overflow = 'hidden';
+        cancelBtn.focus();
+      };
+
+      function close() {
+        overlay.setAttribute('hidden', '');
+        document.body.style.overflow = '';
+        _form = null;
+      }
+
+      confirmBtn.addEventListener('click', function () {
+        if (_form) _form.submit();
+      });
+
+      cancelBtn.addEventListener('click', close);
+
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) close();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !overlay.hasAttribute('hidden')) close();
+      });
+    })();
+  </script>
 </body>
 </html>

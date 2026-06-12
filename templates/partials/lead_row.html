@@ -30,9 +30,10 @@
         <path d="M13.5 3.5a2.121 2.121 0 013 3L7 16l-4 1 1-4 9.5-9.5z"/>
       </svg>
     </a>
-    <form method="post" action="/ui/leads/{{ lead.id }}/delete" style="display:inline"
-          onsubmit="return confirm('Delete this lead and all its messages? This cannot be undone.')">
-      <button type="submit" class="btn-icon btn-icon-danger" title="Delete">
+    <form method="post" action="/ui/leads/{{ lead.id }}/delete" style="display:inline">
+      <button type="button" class="btn-icon btn-icon-danger" title="Delete"
+              data-message="Delete this lead and all its messages? This cannot be undone."
+              onclick="showDeleteModal(this)">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7">
           <path d="M4 6h12M8 6V4h4v2M6 6l1 10h6l1-10"/>
         </svg>
