@@ -7,6 +7,10 @@ import pytest
 # Tests that need a real DB connection are skipped unless DATABASE_URL is set externally.
 os.environ.setdefault("DATABASE_URL", "postgresql://test:test@localhost/test")
 
+# Override insecure defaults so the startup validator doesn't reject test config.
+os.environ.setdefault("APP_SECRET_KEY", "test-secret-key-for-tests-only-32chars!!")
+os.environ.setdefault("APP_PASSWORD", "test-password-not-for-production")
+
 
 @pytest.fixture
 def db_session():

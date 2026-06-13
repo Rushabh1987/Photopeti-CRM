@@ -1,17 +1,23 @@
 """HTML page routes and HTMX partial endpoints."""
 from datetime import date, datetime, timedelta
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.db import get_db
-from app.models import Brand, Lead, Shoot
+from app.models import Brand, Lead, LEAD_SOURCES, LEAD_STATUSES, Shoot, SHOOT_TYPES
 from app.schemas import BrandCreate, BrandUpdate, LeadCreate, LeadUpdate, ShootCreate, ShootUpdate
 from app.services import brands as svc_brands
 from app.services import leads as svc_leads
 from app.services import shoots as svc_shoots
+
+
+def _require(value: str, allowed: tuple, field: str) -> str:
+    if value not in allowed:
+        raise HTTPException(status_code=400, detail=f"Invalid {field}: {value!r}")
+    return value
 
 templates = Jinja2Templates(directory="templates")
 router = APIRouter()
@@ -149,6 +155,7 @@ def create_shoot_ui(
     shoot_date: str = Form(""),
     db: Session = Depends(get_db),
 ):
+    _require(type, SHOOT_TYPES, "type")
     sd = date.fromisoformat(shoot_date) if shoot_date else None
     svc_shoots.create_shoot(db, ShootCreate(
         brand_id=brand_id,
@@ -166,6 +173,7 @@ def create_lead_ui(
     source: str = Form("manual"),
     db: Session = Depends(get_db),
 ):
+    _require(source, LEAD_SOURCES, "source")
     bid = int(brand_id) if brand_id else None
     handle = instagram_handle.lstrip("@").strip() or None
     svc_leads.create_lead(db, LeadCreate(brand_id=bid, instagram_handle=handle, source=source))
@@ -202,6 +210,7 @@ def update_lead_status(
     status: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    _require(status, LEAD_STATUSES, "status")
     updated = svc_leads.update_lead(db, lead_id, LeadUpdate(status=status))
     if updated.brand:
         brand_name = updated.brand.name

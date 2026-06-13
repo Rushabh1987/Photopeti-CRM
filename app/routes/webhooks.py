@@ -1,7 +1,10 @@
 """Inbound webhooks — Instagram DM ingestion."""
+import hashlib
+import hmac
+import json
 import logging
 
-from fastapi import APIRouter, Body, Depends, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
 
@@ -12,6 +15,21 @@ from app.services import leads as svc_leads
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
+
+
+def _verify_signature(request: Request, body: bytes) -> None:
+    """Reject requests whose X-Hub-Signature-256 doesn't match the payload.
+
+    Skipped when META_APP_SECRET is not configured (dev / test mode).
+    """
+    if not settings.meta_app_secret:
+        return
+    signature = request.headers.get("X-Hub-Signature-256", "")
+    expected = "sha256=" + hmac.new(
+        settings.meta_app_secret.encode(), body, hashlib.sha256
+    ).hexdigest()
+    if not hmac.compare_digest(signature, expected):
+        raise HTTPException(status_code=403, detail="Invalid webhook signature")
 
 
 @router.get("/instagram")
@@ -28,7 +46,15 @@ def instagram_verify(
 
 
 @router.post("/instagram", status_code=200)
-def instagram_webhook(payload: dict = Body(...), db: Session = Depends(get_db)):
+async def instagram_webhook(request: Request, db: Session = Depends(get_db)):
+    body = await request.body()
+    _verify_signature(request, body)
+
+    try:
+        payload = json.loads(body) if body else {}
+    except json.JSONDecodeError:
+        return Response(status_code=200)
+
     if payload.get("object") != "instagram":
         return Response(status_code=200)
 

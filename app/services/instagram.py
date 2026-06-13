@@ -29,6 +29,9 @@ def parse_webhook(payload: dict) -> list[tuple[str, str, str]]:
 
 def get_sender_handle(igsid: str) -> str | None:
     """Resolve an Instagram-Scoped User ID to a username via Graph API."""
+    if not igsid.isdigit():
+        logger.warning("Rejected non-numeric IGSID: %s", igsid)
+        return None
     try:
         resp = httpx.get(
             f"{_GRAPH_URL}/{igsid}",

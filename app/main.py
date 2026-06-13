@@ -2,7 +2,7 @@
 
 Run locally:  uvicorn app.main:app --reload
 Health check: GET /health
-API docs:     GET /docs
+API docs:     GET /docs  (only when ENABLE_DOCS=true in .env)
 """
 from contextlib import asynccontextmanager
 
@@ -25,11 +25,36 @@ async def lifespan(app: FastAPI):
     stop_scheduler()
 
 
-app = FastAPI(title="Photographer CRM", version="0.1.0", lifespan=lifespan)
+app = FastAPI(
+    title="Photographer CRM",
+    version="0.1.0",
+    lifespan=lifespan,
+    docs_url="/docs" if settings.enable_docs else None,
+    redoc_url="/redoc" if settings.enable_docs else None,
+    openapi_url="/openapi.json" if settings.enable_docs else None,
+)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 _PUBLIC_PATHS = {"/login", "/health"}
 _PUBLIC_PREFIXES = ("/static/", "/webhooks/")
+
+_MAX_BODY = settings.max_body_size_mb * 1024 * 1024
+
+
+# Middleware runs in reverse-declaration order for requests (last declared = outermost).
+# Execution order for an incoming request:
+#   SessionMiddleware (outermost, via add_middleware)
+#   → add_security_headers
+#   → require_login
+#   → limit_body_size  (innermost @app.middleware)
+#   → route handler
+
+@app.middleware("http")
+async def limit_body_size(request: Request, call_next):
+    content_length = request.headers.get("content-length")
+    if content_length and int(content_length) > _MAX_BODY:
+        return JSONResponse({"detail": "Request body too large"}, status_code=413)
+    return await call_next(request)
 
 
 @app.middleware("http")
@@ -44,9 +69,22 @@ async def require_login(request: Request, call_next):
     return await call_next(request)
 
 
-# SessionMiddleware must be added after the auth middleware so it becomes the
-# outermost layer — it parses the cookie before the auth check runs.
-app.add_middleware(SessionMiddleware, secret_key=settings.app_secret_key)
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    return response
+
+
+# SessionMiddleware is outermost — parses the cookie before require_login runs.
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.app_secret_key,
+    https_only=settings.session_https_only,
+    same_site="lax",
+)
 
 app.include_router(auth.router)
 app.include_router(ui.router)
