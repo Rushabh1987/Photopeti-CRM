@@ -2,7 +2,7 @@
 
 evaluate(db) is called every REMINDER_INTERVAL_MINUTES. For each rule,
 if the condition holds and the last sent reminder is outside the cooldown
-window, a WhatsApp message is sent and a Reminder row is logged.
+window, a Telegram message is sent and a Reminder row is logged.
 Reminders stop automatically once the lead status changes — no cancellation needed.
 """
 import logging
@@ -12,7 +12,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
 from app.models import Lead, Reminder
-from app.services.whatsapp import send_lead_reminder
+from app.services.telegram import send_lead_reminder
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ def _lead_unreplied_2h(db: Session) -> None:
             entity_type="lead",
             entity_id=lead.id,
             rule_key=_RULE,
-            channel="whatsapp",
+            channel="telegram",
             due_at=now,
             status="pending",
         )
@@ -76,7 +76,7 @@ def _lead_unreplied_2h(db: Session) -> None:
             reminder.status = "sent"
             reminder.sent_at = datetime.utcnow()
         except Exception as exc:
-            logger.error("WhatsApp send failed for lead %d: %s", lead.id, exc)
+            logger.error("Telegram send failed for lead %d: %s", lead.id, exc)
             reminder.status = "cancelled"
 
         db.commit()

@@ -17,11 +17,9 @@ class Settings(BaseSettings):
     # Instagram (lead capture)
     instagram_access_token: str = ""
 
-    # WhatsApp Cloud API (owner reminders)
-    whatsapp_access_token: str = ""
-    whatsapp_phone_number_id: str = ""
-    whatsapp_owner_number: str = ""
-    whatsapp_template_name: str = "lead_reminder"
+    # Telegram Bot (owner reminders)
+    telegram_bot_token: str = ""
+    telegram_chat_id: str = ""
     lead_keywords: str = "book,booking,shoot,photography,food shoot,rate,rates,price,pricing,available,availability,hire,quote,inquiry,package,how much,cost,interested,collaboration,project"
 
     # App auth
