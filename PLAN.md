@@ -1,12 +1,12 @@
 # PLAN.md — Photographer CRM
 
-A code-first CRM for a solo food photographer, built incrementally with Claude Code. Tracks brands, shoots, editing, and payments. Captures Instagram leads automatically. One WhatsApp nudge when a lead goes unreplied. Implement one **Part** at a time; commit after each.
+A code-first CRM for a solo food photographer, built incrementally with Claude Code. Tracks brands, shoots, editing, and payments. Captures Instagram leads automatically. One Telegram nudge when a lead goes unreplied. Implement one **Part** at a time; commit after each.
 
 ---
 
 ## Hard rules (do not violate)
 
-- **Code-first only.** No n8n / Make / Zapier / Bubble / Retool / Airtable automations. All orchestration and business logic lives in this app's code. The only external services allowed are messaging APIs that can't be self-hosted (Instagram for lead capture; WhatsApp for owner reminders).
+- **Code-first only.** No n8n / Make / Zapier / Bubble / Retool / Airtable automations. All orchestration and business logic lives in this app's code. The only external services allowed are messaging APIs that can't be self-hosted (Instagram for lead capture; Telegram for owner reminders).
 - **Persistent data only.** Everything is stored in a real on-disk database via SQLAlchemy. Nothing in-memory or temporary. Data survives restarts, crashes, and redeploys.
 - **Cheapest practical.** Open-source libraries, self-hosted, runs on a PC or a ~$5 VPS.
 - **Multi-tenant ready.** Every table has `tenant_id` (default 1) from day one so a single-owner app can later become a multi-business SaaS without a rewrite.
@@ -24,7 +24,7 @@ A code-first CRM for a solo food photographer, built incrementally with Claude C
 | Service                        | Used for                | Note                                                                                       |
 | ------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------ |
 | Instagram Messaging API        | Capture + reply to DMs  | Dedicated business account required. Facebook Page + Meta App Review for production. No scraping. |
-| WhatsApp Cloud API (templates) | Reminders to the owner  | Pre-approved message templates for proactive outreach outside the 24h window.             |
+| Telegram Bot API               | Reminders to the owner  | Free, no approval required. Bot created via @BotFather.                                   |
 
 ---
 
@@ -71,35 +71,25 @@ Re-evaluated every 15 min; repeats until the owner resolves the condition (no ma
 - **Test:** ticking a checkbox updates the DB and refreshes counts without full page reload.
 - **Done when:** the owner can manage his entire pipeline from the browser on phone or desktop.
 
-### Part 4 — Reminder engine
+### Part 4 — Reminder engine ✅ (done)
 
-- **Goal:** WhatsApp nudge to owner when a new lead goes unreplied for 2 hours.
-- **Files:** `services/reminders.py` (RULES + `evaluate(db)`), `services/whatsapp.py` (httpx `sendMessage` using approved templates), `scheduler/jobs.py` (APScheduler every 15 min); start/stop in `main.py` lifespan.
-- **Implement:** `lead_unreplied_2h` rule; idempotent via the `reminders` table + 2h cooldown; send WhatsApp template message; log each send.
-- **Test:** create a lead, backdate first_contact >2h, run evaluate → one WhatsApp message + one reminder row; run again within cooldown → none.
-- **Done when:** unreplied leads reliably nudge the owner every 2h and stop once lead status changes.
+- **Goal:** Telegram nudge to owner when a new lead goes unreplied for 2 hours.
+- **Files:** `services/reminders.py` (RULES + `evaluate(db)`), `services/telegram.py` (httpx sendMessage to Telegram Bot API), `scheduler/jobs.py` (APScheduler every 15 min); start/stop in `main.py` lifespan.
+- **Implement:** `lead_unreplied_2h` rule; idempotent via the `reminders` table + 2h cooldown; send Telegram message; log each send.
+- **Pending:** `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` env vars to be filled with client.
 
-### Part 5 — Instagram ingest
+### Part 5 — Instagram ingest ✅ (done)
 
 - **Goal:** incoming Instagram DMs auto-create leads with conversation history using keyword filtering.
 - **Files:** `routes/webhooks.py`, `services/instagram.py`, `services/leads.py` (`upsert_from_instagram`).
-- **Implement:**
-  - Meta GET verification handshake.
-  - POST parse → extract sender instagram handle + message text + raw payload.
-  - **Known sender** (instagram handle exists in brands table) → append message to their existing conversation. No new lead created.
-  - **Unknown sender** → run keyword filter against message text. Keywords: `book, booking, shoot, photography, food shoot, rate, rates, price, pricing, available, availability, hire, quote, inquiry, package, how much, cost, interested, collaboration, project`. Match → create brand + lead (status=new) + message. No match → silently ignore.
-  - Keywords configurable via `LEAD_KEYWORDS` in `.env`.
-  - Optional reply send within 24h window.
-- **Test:** unknown sender with keyword → brand + lead created; unknown sender without keyword → nothing created; known sender → message appended to existing conversation.
-- **Done when:** real DMs land as leads automatically (dev mode first, then App Review for production).
+- **Done:** Meta webhook verification, payload parsing, keyword filtering, lead upsert logic, HMAC signature verification.
+- **Pending:** webhook registration in Meta dashboard (requires live deployment URL), Meta App Review for production use.
 
-### Part 6 — Deploy
+### Part 6 — Deploy ✅ (done)
 
 - **Goal:** run in production cheaply.
-- **Files:** `Dockerfile`, `docker-compose.yml` (already present), add Caddy for HTTPS.
-- **Implement:** containerize; persist `data/` volume; public HTTPS for webhooks (Caddy on a VPS, or a tunnel for dev); submit Meta App Review.
-- **Test:** rebuild container → data persists; webhooks reachable over HTTPS.
-- **Done when:** the system runs unattended and survives restarts/redeploys.
+- **Platform:** Railway (Docker-based, auto-deploys on push to main).
+- **Pending:** add all env variables in Railway dashboard, generate public domain, set up Meta webhook with live URL.
 
 ### Part 7 (optional) — Multi-tenant SaaS
 
