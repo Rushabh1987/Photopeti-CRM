@@ -5,3 +5,5 @@ data/
 watched/
 .venv/
 .pytest_cache/
+.playwright-mcp/
+.claude/
