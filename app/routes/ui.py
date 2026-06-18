@@ -12,6 +12,7 @@ from app.schemas import BrandCreate, BrandUpdate, LeadCreate, LeadUpdate, ShootC
 from app.services import brands as svc_brands
 from app.services import leads as svc_leads
 from app.services import shoots as svc_shoots
+from app.services.shoots import delete_shoot
 
 
 def _require(value: str, allowed: tuple, field: str) -> str:
@@ -123,6 +124,17 @@ def lead_edit_page(request: Request, lead_id: int, db: Session = Depends(get_db)
     return templates.TemplateResponse(
         request, "lead_edit.html",
         {"lead": lead, "brand_list": brand_objs, "active": "leads"},
+    )
+
+
+@router.get("/shoots/{shoot_id}/edit", response_class=HTMLResponse)
+def shoot_edit_page(request: Request, shoot_id: int, db: Session = Depends(get_db)):
+    shoot = svc_shoots.get_shoot(db, shoot_id)
+    if not shoot:
+        return RedirectResponse(url="/brands")
+    return templates.TemplateResponse(
+        request, "shoot_edit.html",
+        {"shoot": shoot, "active": "brands"},
     )
 
 
@@ -273,3 +285,29 @@ def edit_lead_ui(
 def delete_lead_ui(lead_id: int, db: Session = Depends(get_db)):
     svc_leads.delete_lead(db, lead_id)
     return RedirectResponse(url="/leads", status_code=303)
+
+
+@router.post("/ui/shoots/{shoot_id}/edit", response_class=HTMLResponse)
+def edit_shoot_ui(
+    shoot_id: int,
+    type: str = Form(...),
+    description: str = Form(""),
+    shoot_date: str = Form(""),
+    db: Session = Depends(get_db),
+):
+    _require(type, SHOOT_TYPES, "type")
+    sd = date.fromisoformat(shoot_date) if shoot_date else None
+    shoot = svc_shoots.update_shoot(db, shoot_id, ShootUpdate(
+        type=type,
+        description=description or None,
+        shoot_date=sd,
+    ))
+    return RedirectResponse(url=f"/brands/{shoot.brand_id}", status_code=303)
+
+
+@router.post("/ui/shoots/{shoot_id}/delete", response_class=HTMLResponse)
+def delete_shoot_ui(shoot_id: int, db: Session = Depends(get_db)):
+    shoot = svc_shoots.get_shoot(db, shoot_id)
+    brand_id = shoot.brand_id if shoot else None
+    delete_shoot(db, shoot_id)
+    return RedirectResponse(url=f"/brands/{brand_id}" if brand_id else "/brands", status_code=303)

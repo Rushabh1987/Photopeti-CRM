@@ -333,6 +333,20 @@ button, input, select, textarea { font-family: inherit; }
 .btn-ghost { background: transparent; color: var(--text-2); border-color: var(--border); }
 .btn-ghost:hover { background: var(--surface-2); color: var(--text); border-color: var(--border-lt); }
 
+.btn-xs { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
+
+.search-inline {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.8125rem;
+  font-family: var(--font-body);
+  width: 200px;
+}
+.search-inline:focus { outline: none; border-color: var(--accent); }
+
 /* --- Form panel (add brand / add shoot) --- */
 details.add-panel { margin-bottom: 1.5rem; }
 details.add-panel > summary { list-style: none; cursor: pointer; }

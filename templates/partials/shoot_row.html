@@ -16,4 +16,12 @@
              onchange="this.form.submit()">
     </form>
   </td>
+  <td class="td-actions">
+    <a href="/shoots/{{ shoot.id }}/edit" class="btn btn-xs btn-ghost">Edit</a>
+    <form method="post" action="/ui/shoots/{{ shoot.id }}/delete" style="display:inline">
+      <button type="button" class="btn btn-xs btn-danger"
+              data-message="Delete this shoot? This cannot be undone."
+              onclick="showDeleteModal(this)">Delete</button>
+    </form>
+  </td>
 </tr>

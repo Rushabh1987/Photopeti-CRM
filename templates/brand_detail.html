@@ -55,6 +55,8 @@
 <!-- Shoots section -->
 <div class="section-head">
   <span class="section-title">Shoots</span>
+  <input type="search" id="shoot-search" placeholder="Search description…"
+         class="search-inline" oninput="filterShoots(this.value)">
 </div>
 
 <details class="add-panel">
@@ -101,9 +103,10 @@
         <th>Date</th>
         <th>Shoot done</th>
         <th>Editing done</th>
+        <th>Actions</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="shoots-tbody">
       {% for shoot in shoots %}
         {% include "partials/shoot_row.html" %}
       {% endfor %}
@@ -114,4 +117,16 @@
 <div class="empty-state">No shoots yet. Add the first one above.</div>
 {% endif %}
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterShoots(q) {
+  const term = q.toLowerCase();
+  document.querySelectorAll('#shoots-tbody tr').forEach(row => {
+    const desc = row.querySelector('td:first-child')?.textContent.toLowerCase() || '';
+    row.style.display = desc.includes(term) ? '' : 'none';
+  });
+}
+</script>
 {% endblock %}

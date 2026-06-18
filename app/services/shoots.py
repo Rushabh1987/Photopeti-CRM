@@ -32,3 +32,10 @@ def update_shoot(db: Session, shoot_id: int, data: ShootUpdate) -> Shoot | None:
     db.commit()
     db.refresh(shoot)
     return shoot
+
+
+def delete_shoot(db: Session, shoot_id: int) -> None:
+    shoot = get_shoot(db, shoot_id)
+    if shoot:
+        db.delete(shoot)
+        db.commit()

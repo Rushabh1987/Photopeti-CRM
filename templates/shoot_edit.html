@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Edit Shoot — Studio CRM{% endblock %}
+
+{% block content %}
+<a href="/brands/{{ shoot.brand_id }}" class="back-link">
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 5l-5 5 5 5"/>
+  </svg>
+  {{ shoot.brand.name }}
+</a>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Edit Shoot</h1>
+    <p class="page-subtitle">{{ shoot.description or shoot.type }}</p>
+  </div>
+</div>
+
+<div class="form-card">
+  <form method="POST" action="/ui/shoots/{{ shoot.id }}/edit">
+    <div class="form-grid">
+      <div class="field">
+        <label for="type">Type</label>
+        <select id="type" name="type">
+          <option value="photo" {% if shoot.type == 'photo' %}selected{% endif %}>Photo</option>
+          <option value="video" {% if shoot.type == 'video' %}selected{% endif %}>Video</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="shoot_date">Shoot date</label>
+        <input type="date" id="shoot_date" name="shoot_date"
+               value="{{ shoot.shoot_date.isoformat() if shoot.shoot_date else '' }}">
+      </div>
+      <div class="field full">
+        <label for="description">Description</label>
+        <input type="text" id="description" name="description"
+               value="{{ shoot.description or '' }}"
+               placeholder="e.g. Pasta range — 10 hero shots">
+      </div>
+    </div>
+    <div class="form-actions">
+      <a href="/brands/{{ shoot.brand_id }}" class="btn btn-ghost">Cancel</a>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
