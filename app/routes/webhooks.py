@@ -60,7 +60,7 @@ async def instagram_webhook(request: Request, db: Session = Depends(get_db)):
 
     for igsid, text, raw in svc_instagram.parse_webhook(payload):
         try:
-            handle = svc_instagram.get_sender_handle(igsid)
+            handle = await svc_instagram.get_sender_handle(igsid)
             if handle is None:
                 logger.warning("Could not resolve IGSID %s — skipping", igsid)
                 continue

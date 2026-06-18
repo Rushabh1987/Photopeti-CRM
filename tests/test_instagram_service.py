@@ -1,6 +1,7 @@
 """Unit tests for services/instagram.py"""
 import json
-from unittest.mock import MagicMock, patch
+import pytest
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from app.services.instagram import get_sender_handle, parse_webhook
 
@@ -43,26 +44,45 @@ def test_parse_webhook_skips_non_message_events():
     assert results == []
 
 
-def test_get_sender_handle_success():
+@pytest.mark.asyncio
+async def test_get_sender_handle_success():
     mock_resp = MagicMock()
     mock_resp.json.return_value = {"username": "foodbrand", "id": "9999"}
-    with patch("app.services.instagram.httpx.get", return_value=mock_resp):
-        result = get_sender_handle("9999")
+    mock_resp.raise_for_status = MagicMock()
+    mock_client = AsyncMock()
+    mock_client.get = AsyncMock(return_value=mock_resp)
+    with patch("app.services.instagram.httpx.AsyncClient", return_value=AsyncMock(
+        __aenter__=AsyncMock(return_value=mock_client),
+        __aexit__=AsyncMock(return_value=False),
+    )):
+        result = await get_sender_handle("9999")
     assert result == "foodbrand"
 
 
-def test_get_sender_handle_returns_none_on_error():
-    with patch("app.services.instagram.httpx.get", side_effect=Exception("network error")):
-        result = get_sender_handle("9999")
+@pytest.mark.asyncio
+async def test_get_sender_handle_returns_none_on_error():
+    mock_client = AsyncMock()
+    mock_client.get = AsyncMock(side_effect=Exception("network error"))
+    with patch("app.services.instagram.httpx.AsyncClient", return_value=AsyncMock(
+        __aenter__=AsyncMock(return_value=mock_client),
+        __aexit__=AsyncMock(return_value=False),
+    )):
+        result = await get_sender_handle("9999")
     assert result is None
 
 
-def test_get_sender_handle_returns_none_on_http_error():
+@pytest.mark.asyncio
+async def test_get_sender_handle_returns_none_on_http_error():
     import httpx as httpx_lib
     mock_resp = MagicMock()
     mock_resp.raise_for_status.side_effect = httpx_lib.HTTPStatusError(
         "403", request=MagicMock(), response=MagicMock()
     )
-    with patch("app.services.instagram.httpx.get", return_value=mock_resp):
-        result = get_sender_handle("9999")
+    mock_client = AsyncMock()
+    mock_client.get = AsyncMock(return_value=mock_resp)
+    with patch("app.services.instagram.httpx.AsyncClient", return_value=AsyncMock(
+        __aenter__=AsyncMock(return_value=mock_client),
+        __aexit__=AsyncMock(return_value=False),
+    )):
+        result = await get_sender_handle("9999")
     assert result is None

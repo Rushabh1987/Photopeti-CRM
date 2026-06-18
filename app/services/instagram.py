@@ -27,17 +27,18 @@ def parse_webhook(payload: dict) -> list[tuple[str, str, str]]:
     return results
 
 
-def get_sender_handle(igsid: str) -> str | None:
+async def get_sender_handle(igsid: str) -> str | None:
     """Resolve an Instagram-Scoped User ID to a username via Graph API."""
     if not igsid.isdigit():
         logger.warning("Rejected non-numeric IGSID: %s", igsid)
         return None
     try:
-        resp = httpx.get(
-            f"{_GRAPH_URL}/{igsid}",
-            params={"fields": "username", "access_token": settings.instagram_access_token},
-            timeout=10,
-        )
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(
+                f"{_GRAPH_URL}/{igsid}",
+                params={"fields": "username", "access_token": settings.instagram_access_token},
+                timeout=10,
+            )
         resp.raise_for_status()
         return resp.json().get("username")
     except Exception as exc:

@@ -197,6 +197,8 @@ def create_lead_ui(
 @router.post("/ui/shoots/{shoot_id}/toggle-shoot-done")
 def toggle_shoot_done(shoot_id: int, db: Session = Depends(get_db)):
     shoot = svc_shoots.get_shoot(db, shoot_id)
+    if not shoot:
+        return RedirectResponse(url="/brands", status_code=303)
     svc_shoots.update_shoot(db, shoot_id, ShootUpdate(shoot_done=not shoot.shoot_done))
     return RedirectResponse(url=f"/brands/{shoot.brand_id}", status_code=303)
 
@@ -204,6 +206,8 @@ def toggle_shoot_done(shoot_id: int, db: Session = Depends(get_db)):
 @router.post("/ui/shoots/{shoot_id}/toggle-editing-done")
 def toggle_editing_done(shoot_id: int, db: Session = Depends(get_db)):
     shoot = svc_shoots.get_shoot(db, shoot_id)
+    if not shoot:
+        return RedirectResponse(url="/brands", status_code=303)
     svc_shoots.update_shoot(db, shoot_id, ShootUpdate(editing_done=not shoot.editing_done))
     return RedirectResponse(url=f"/brands/{shoot.brand_id}", status_code=303)
 
@@ -211,6 +215,8 @@ def toggle_editing_done(shoot_id: int, db: Session = Depends(get_db)):
 @router.post("/ui/brands/{brand_id}/toggle-payment")
 def toggle_payment(brand_id: int, db: Session = Depends(get_db)):
     brand = svc_brands.get_brand(db, brand_id)
+    if not brand:
+        return RedirectResponse(url="/brands", status_code=303)
     svc_brands.update_brand(db, brand_id, BrandUpdate(payment_done=not brand.payment_done))
     return RedirectResponse(url=f"/brands/{brand_id}", status_code=303)
 
@@ -271,6 +277,7 @@ def edit_lead_ui(
     status: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    _require(status, LEAD_STATUSES, "status")
     bid = int(brand_id) if brand_id else None
     handle = instagram_handle.lstrip("@").strip() or None
     svc_leads.update_lead(db, lead_id, LeadUpdate(

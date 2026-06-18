@@ -1,11 +1,11 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.models import Brand, Lead, Message, Shoot
 from app.schemas import BrandCreate, BrandUpdate
 
 
 def list_brands(db: Session, q: str = "") -> list[Brand]:
-    query = db.query(Brand)
+    query = db.query(Brand).options(selectinload(Brand.shoots))
     if q:
         pattern = f"%{q}%"
         query = query.filter(
