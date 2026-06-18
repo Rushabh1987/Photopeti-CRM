@@ -13,7 +13,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.config import settings
 from app.db import init_db
-from app.routes import auth, brands, dashboard, leads, shoots, ui, webhooks
+from app.routes import auth, brands, dashboard, exports, leads, shoots, ui, webhooks
 
 
 @asynccontextmanager
@@ -103,6 +103,7 @@ app.include_router(brands.router)
 app.include_router(leads.router)
 app.include_router(shoots.router)
 app.include_router(dashboard.router)
+app.include_router(exports.router)
 app.include_router(webhooks.router)
 
 
