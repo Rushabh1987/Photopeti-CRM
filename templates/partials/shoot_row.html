@@ -6,22 +6,19 @@
   </td>
   <td>
     <form method="post" action="/ui/shoots/{{ shoot.id }}/toggle-shoot-done">
-      <input type="checkbox" class="toggle" {% if shoot.shoot_done %}checked{% endif %}
-             onchange="this.form.submit()">
+      <input type="checkbox" class="toggle" {% if shoot.shoot_done %}checked{% endif %}>
     </form>
   </td>
   <td>
     <form method="post" action="/ui/shoots/{{ shoot.id }}/toggle-editing-done">
-      <input type="checkbox" class="toggle" {% if shoot.editing_done %}checked{% endif %}
-             onchange="this.form.submit()">
+      <input type="checkbox" class="toggle" {% if shoot.editing_done %}checked{% endif %}>
     </form>
   </td>
   <td class="td-actions">
     <a href="/shoots/{{ shoot.id }}/edit" class="btn btn-xs btn-ghost">Edit</a>
     <form method="post" action="/ui/shoots/{{ shoot.id }}/delete" style="display:inline">
       <button type="button" class="btn btn-xs btn-danger"
-              data-message="Delete this shoot? This cannot be undone."
-              onclick="showDeleteModal(this)">Delete</button>
+              data-message="Delete this shoot? This cannot be undone.">Delete</button>
     </form>
   </td>
 </tr>

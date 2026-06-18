@@ -56,7 +56,7 @@
 <div class="section-head">
   <span class="section-title">Shoots</span>
   <input type="search" id="shoot-search" placeholder="Search description…"
-         class="search-inline" oninput="filterShoots(this.value)">
+         class="search-inline">
 </div>
 
 <details class="add-panel">
@@ -119,14 +119,3 @@
 
 {% endblock %}
 
-{% block scripts %}
-<script>
-function filterShoots(q) {
-  const term = q.toLowerCase();
-  document.querySelectorAll('#shoots-tbody tr').forEach(row => {
-    const desc = row.querySelector('td:first-child')?.textContent.toLowerCase() || '';
-    row.style.display = desc.includes(term) ? '' : 'none';
-  });
-}
-</script>
-{% endblock %}

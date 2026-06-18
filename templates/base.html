@@ -131,42 +131,6 @@
     </div>
   </div>
 
-  <script>
-    (function () {
-      var _form = null;
-      var overlay = document.getElementById('delete-modal');
-      var msgEl   = document.getElementById('delete-modal-msg');
-      var confirmBtn = document.getElementById('delete-confirm-btn');
-      var cancelBtn  = document.getElementById('delete-cancel-btn');
-
-      window.showDeleteModal = function (btn) {
-        _form = btn.closest('form');
-        msgEl.textContent = btn.dataset.message || 'This action cannot be undone.';
-        overlay.removeAttribute('hidden');
-        document.body.style.overflow = 'hidden';
-        cancelBtn.focus();
-      };
-
-      function close() {
-        overlay.setAttribute('hidden', '');
-        document.body.style.overflow = '';
-        _form = null;
-      }
-
-      confirmBtn.addEventListener('click', function () {
-        if (_form) _form.submit();
-      });
-
-      cancelBtn.addEventListener('click', close);
-
-      overlay.addEventListener('click', function (e) {
-        if (e.target === overlay) close();
-      });
-
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !overlay.hasAttribute('hidden')) close();
-      });
-    })();
-  </script>
+  <script src="/static/app.js" defer></script>
 </body>
 </html>

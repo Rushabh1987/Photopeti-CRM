@@ -5,8 +5,7 @@
            {% if brand.payment_done %}checked{% endif %}>
   {% else %}
     <form method="post" action="/ui/brands/{{ brand.id }}/toggle-payment">
-      <input type="checkbox" class="toggle" {% if brand.payment_done %}checked{% endif %}
-             onchange="this.form.submit()">
+      <input type="checkbox" class="toggle" {% if brand.payment_done %}checked{% endif %}>
     </form>
   {% endif %}
   <span>Payment {{ 'received' if brand.payment_done else 'pending' }}</span>
