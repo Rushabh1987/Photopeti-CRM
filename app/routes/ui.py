@@ -4,7 +4,8 @@ from datetime import date, datetime, timedelta
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
+from sqlalchemy import nullslast
+from sqlalchemy.orm import Session, joinedload, selectinload
 
 from app.db import get_db
 from app.models import Brand, Lead, LEAD_SOURCES, LEAD_STATUSES, Shoot, SHOOT_TYPES
@@ -138,6 +139,73 @@ def shoot_edit_page(request: Request, shoot_id: int, db: Session = Depends(get_d
     )
 
 
+# ── Dashboard detail modals ──────────────────────────────────────────────────
+
+_DETAIL_KEYS = {"new_leads", "unreplied_leads", "todays_shoots", "editing_pending", "payments_due"}
+
+@router.get("/dashboard/detail/{key}", response_class=HTMLResponse)
+def dashboard_detail(request: Request, key: str, db: Session = Depends(get_db)):
+    if key not in _DETAIL_KEYS:
+        raise HTTPException(status_code=404)
+    today = date.today()
+    two_hours_ago = datetime.utcnow() - timedelta(hours=2)
+
+    if key == "new_leads":
+        leads = (
+            db.query(Lead)
+            .filter(Lead.status == "new")
+            .options(joinedload(Lead.brand))
+            .order_by(Lead.created_at.desc())
+            .all()
+        )
+        return templates.TemplateResponse(request, "partials/dash_new_leads.html", {"leads": leads})
+
+    if key == "unreplied_leads":
+        leads = (
+            db.query(Lead)
+            .filter(Lead.status == "new", Lead.first_contact_at <= two_hours_ago)
+            .options(joinedload(Lead.brand))
+            .order_by(Lead.first_contact_at.asc())
+            .all()
+        )
+        return templates.TemplateResponse(
+            request, "partials/dash_unreplied_leads.html",
+            {"leads": leads, "now": datetime.utcnow()},
+        )
+
+    if key == "todays_shoots":
+        shoots = (
+            db.query(Shoot)
+            .filter(Shoot.shoot_date == today)
+            .options(joinedload(Shoot.brand))
+            .order_by(Shoot.created_at.asc())
+            .all()
+        )
+        return templates.TemplateResponse(request, "partials/dash_todays_shoots.html", {"shoots": shoots})
+
+    if key == "editing_pending":
+        shoots = (
+            db.query(Shoot)
+            .filter(Shoot.shoot_done == True, Shoot.editing_done == False)
+            .options(joinedload(Shoot.brand))
+            .order_by(nullslast(Shoot.shoot_date.asc()))
+            .all()
+        )
+        return templates.TemplateResponse(request, "partials/dash_editing_pending.html", {"shoots": shoots})
+
+    # payments_due: brands with payment_done=False that have at least one shoot
+    brands = (
+        db.query(Brand)
+        .join(Shoot, Brand.id == Shoot.brand_id)
+        .filter(Brand.payment_done == False)
+        .options(selectinload(Brand.shoots))
+        .distinct()
+        .order_by(Brand.name.asc())
+        .all()
+    )
+    return templates.TemplateResponse(request, "partials/dash_payments_due.html", {"brands": brands})
+
+
 # ── Form submissions (POST → redirect) ──────────────────────────────────────
 
 @router.post("/ui/brands", response_class=HTMLResponse)
@@ -194,21 +262,25 @@ def create_lead_ui(
 
 # ── Checkbox toggles ─────────────────────────────────────────────────────────
 
-@router.post("/ui/shoots/{shoot_id}/toggle-shoot-done")
-def toggle_shoot_done(shoot_id: int, db: Session = Depends(get_db)):
+@router.post("/ui/shoots/{shoot_id}/toggle-shoot-done", response_class=HTMLResponse)
+def toggle_shoot_done(request: Request, shoot_id: int, db: Session = Depends(get_db)):
     shoot = svc_shoots.get_shoot(db, shoot_id)
     if not shoot:
         return RedirectResponse(url="/brands", status_code=303)
-    svc_shoots.update_shoot(db, shoot_id, ShootUpdate(shoot_done=not shoot.shoot_done))
+    updated = svc_shoots.update_shoot(db, shoot_id, ShootUpdate(shoot_done=not shoot.shoot_done))
+    if request.headers.get("HX-Request"):
+        return templates.TemplateResponse(request, "partials/shoot_row.html", {"shoot": updated})
     return RedirectResponse(url=f"/brands/{shoot.brand_id}", status_code=303)
 
 
-@router.post("/ui/shoots/{shoot_id}/toggle-editing-done")
-def toggle_editing_done(shoot_id: int, db: Session = Depends(get_db)):
+@router.post("/ui/shoots/{shoot_id}/toggle-editing-done", response_class=HTMLResponse)
+def toggle_editing_done(request: Request, shoot_id: int, db: Session = Depends(get_db)):
     shoot = svc_shoots.get_shoot(db, shoot_id)
     if not shoot:
         return RedirectResponse(url="/brands", status_code=303)
-    svc_shoots.update_shoot(db, shoot_id, ShootUpdate(editing_done=not shoot.editing_done))
+    updated = svc_shoots.update_shoot(db, shoot_id, ShootUpdate(editing_done=not shoot.editing_done))
+    if request.headers.get("HX-Request"):
+        return templates.TemplateResponse(request, "partials/shoot_row.html", {"shoot": updated})
     return RedirectResponse(url=f"/brands/{shoot.brand_id}", status_code=303)
 
 

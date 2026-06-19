@@ -5,14 +5,18 @@
     {% if shoot.shoot_date %}{{ shoot.shoot_date.strftime('%d %b %Y') }}{% else %}—{% endif %}
   </td>
   <td>
-    <form method="post" action="/ui/shoots/{{ shoot.id }}/toggle-shoot-done">
-      <input type="checkbox" class="toggle" {% if shoot.shoot_done %}checked{% endif %}>
-    </form>
+    <input type="checkbox" class="toggle" {% if shoot.shoot_done %}checked{% endif %}
+           hx-post="/ui/shoots/{{ shoot.id }}/toggle-shoot-done"
+           hx-trigger="change"
+           hx-target="closest tr"
+           hx-swap="outerHTML">
   </td>
   <td>
-    <form method="post" action="/ui/shoots/{{ shoot.id }}/toggle-editing-done">
-      <input type="checkbox" class="toggle" {% if shoot.editing_done %}checked{% endif %}>
-    </form>
+    <input type="checkbox" class="toggle" {% if shoot.editing_done %}checked{% endif %}
+           hx-post="/ui/shoots/{{ shoot.id }}/toggle-editing-done"
+           hx-trigger="change"
+           hx-target="closest tr"
+           hx-swap="outerHTML">
   </td>
   <td class="td-actions">
     <a href="/shoots/{{ shoot.id }}/edit" class="btn btn-xs btn-ghost">Edit</a>

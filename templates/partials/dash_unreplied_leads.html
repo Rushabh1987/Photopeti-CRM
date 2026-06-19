@@ -1,0 +1,30 @@
+<h3 class="detail-modal-title">Unreplied Leads (&gt;2h)</h3>
+{% if leads %}
+<div class="detail-table-wrap">
+  <table class="detail-table">
+    <thead>
+      <tr>
+        <th>Name / Handle</th>
+        <th>Source</th>
+        <th>First Contact</th>
+        <th>Waiting</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for lead in leads %}
+      {% set hours = ((now - lead.first_contact_at).total_seconds() / 3600) | int %}
+      <tr>
+        <td>{{ lead.brand.name if lead.brand else ('@' + lead.instagram_handle if lead.instagram_handle else '—') }}</td>
+        <td><span class="badge badge-{{ lead.source }}">{{ lead.source }}</span></td>
+        <td class="td-muted">{{ lead.first_contact_at.strftime('%d %b, %H:%M') }}</td>
+        <td><span class="badge badge-warn">{{ hours }}h</span></td>
+        <td><a href="/leads/{{ lead.id }}" class="btn btn-xs btn-ghost">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="detail-empty">No unreplied leads — you're all caught up.</p>
+{% endif %}

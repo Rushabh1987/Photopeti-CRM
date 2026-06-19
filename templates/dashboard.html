@@ -11,25 +11,54 @@
 
 <!-- Metric cards -->
 <div class="cards-grid">
-  <div class="metric-card">
+  <div class="metric-card clickable"
+       hx-get="/dashboard/detail/new_leads"
+       hx-target="#dash-modal-body"
+       hx-swap="innerHTML">
     <div class="metric-num">{{ stats.new_leads }}</div>
     <div class="metric-label">New Leads</div>
   </div>
-  <div class="metric-card {% if stats.unreplied_leads > 0 %}warn{% endif %}">
+  <div class="metric-card clickable {% if stats.unreplied_leads > 0 %}warn{% endif %}"
+       hx-get="/dashboard/detail/unreplied_leads"
+       hx-target="#dash-modal-body"
+       hx-swap="innerHTML">
     <div class="metric-num">{{ stats.unreplied_leads }}</div>
     <div class="metric-label">Unreplied &gt;2h</div>
   </div>
-  <div class="metric-card">
+  <div class="metric-card clickable"
+       hx-get="/dashboard/detail/todays_shoots"
+       hx-target="#dash-modal-body"
+       hx-swap="innerHTML">
     <div class="metric-num">{{ stats.todays_shoots }}</div>
     <div class="metric-label">Today's Shoots</div>
   </div>
-  <div class="metric-card">
+  <div class="metric-card clickable"
+       hx-get="/dashboard/detail/editing_pending"
+       hx-target="#dash-modal-body"
+       hx-swap="innerHTML">
     <div class="metric-num">{{ stats.editing_pending }}</div>
     <div class="metric-label">Editing Pending</div>
   </div>
-  <div class="metric-card {% if stats.payments_pending > 0 %}warn{% endif %}">
+  <div class="metric-card clickable {% if stats.payments_pending > 0 %}warn{% endif %}"
+       hx-get="/dashboard/detail/payments_due"
+       hx-target="#dash-modal-body"
+       hx-swap="innerHTML">
     <div class="metric-num">{{ stats.payments_pending }}</div>
     <div class="metric-label">Payments Due</div>
+  </div>
+</div>
+
+<!-- Dash detail modal -->
+<div id="dash-modal" class="modal-overlay" hidden>
+  <div class="modal-card modal-wide">
+    <div class="dash-modal-header">
+      <button id="dash-modal-close" class="dash-modal-close" aria-label="Close">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 5l10 10M15 5L5 15"/>
+        </svg>
+      </button>
+    </div>
+    <div id="dash-modal-body" class="dash-modal-body"></div>
   </div>
 </div>
 

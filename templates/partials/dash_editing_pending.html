@@ -1,0 +1,29 @@
+<h3 class="detail-modal-title">Editing Pending</h3>
+{% if shoots %}
+<div class="detail-table-wrap">
+  <table class="detail-table">
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Description</th>
+        <th>Shoot Date</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for shoot in shoots %}
+      <tr>
+        <td>{{ shoot.brand.name if shoot.brand else '—' }}</td>
+        <td>{{ shoot.description or '—' }}</td>
+        <td class="td-muted">
+          {% if shoot.shoot_date %}{{ shoot.shoot_date.strftime('%d %b %Y') }}{% else %}—{% endif %}
+        </td>
+        <td><a href="/brands/{{ shoot.brand_id }}" class="btn btn-xs btn-ghost">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="detail-empty">No shoots pending editing.</p>
+{% endif %}

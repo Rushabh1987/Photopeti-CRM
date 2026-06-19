@@ -1,0 +1,35 @@
+<h3 class="detail-modal-title">Today's Shoots</h3>
+{% if shoots %}
+<div class="detail-table-wrap">
+  <table class="detail-table">
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Shoot Done</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for shoot in shoots %}
+      <tr>
+        <td>{{ shoot.brand.name if shoot.brand else '—' }}</td>
+        <td>{{ shoot.description or '—' }}</td>
+        <td><span class="badge badge-{{ shoot.type }}">{{ shoot.type }}</span></td>
+        <td>
+          {% if shoot.shoot_done %}
+            <span class="badge badge-converted">Done</span>
+          {% else %}
+            <span class="badge badge-new">Pending</span>
+          {% endif %}
+        </td>
+        <td><a href="/brands/{{ shoot.brand_id }}" class="btn btn-xs btn-ghost">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="detail-empty">No shoots scheduled for today.</p>
+{% endif %}

@@ -1,0 +1,27 @@
+<h3 class="detail-modal-title">Payments Due</h3>
+{% if brands %}
+<div class="detail-table-wrap">
+  <table class="detail-table">
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Instagram</th>
+        <th>Shoots</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for brand in brands %}
+      <tr>
+        <td>{{ brand.name }}</td>
+        <td class="td-muted">{{ brand.instagram or '—' }}</td>
+        <td>{{ brand.shoots | length }}</td>
+        <td><a href="/brands/{{ brand.id }}" class="btn btn-xs btn-ghost">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<p class="detail-empty">No payments pending.</p>
+{% endif %}

@@ -100,7 +100,6 @@ button, input, select, textarea { font-family: inherit; }
 /* --- Mobile --- */
 @media (max-width: 768px) {
   .sidebar { display: none; }
-  .topright-logout { display: none; }
 
   .topbar {
     display: flex; align-items: center;
@@ -142,25 +141,25 @@ button, input, select, textarea { font-family: inherit; }
   .bnav-item:hover  { color: var(--text-2); }
 }
 
-/* --- Logout --- */
-.topright-logout {
-  position: fixed;
-  top: 0.75rem; right: 1rem;
-  z-index: 200;
+/* --- Sidebar footer (Sign Out) --- */
+.sidebar-footer {
+  padding: 0.75rem 0.5rem;
+  border-top: 1px solid var(--border);
 }
 .logout-btn {
-  display: flex; align-items: center; gap: 0.6rem;
-  background: var(--surface-2); border: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0.625rem;
+  width: 100%;
+  padding: 0.575rem 0.875rem;
   border-radius: var(--radius);
+  background: none; border: none;
   color: var(--text-2);
-  cursor: pointer;
   font-family: var(--font-body);
   font-size: 0.875rem; font-weight: 500;
-  padding: 0.5rem 0.875rem;
-  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
 }
 .logout-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-.logout-btn:hover { background: var(--surface-3); color: var(--text); border-color: var(--text-3); }
+.logout-btn:hover { background: var(--surface-2); color: var(--text); }
 
 .topbar-logout {
   margin-left: auto;
@@ -286,6 +285,7 @@ button, input, select, textarea { font-family: inherit; }
 .metric-card:nth-child(5) { animation-delay: .24s; }
 .metric-card:hover { border-color: var(--border-lt); background: var(--surface-2); }
 .metric-card.warn { border-color: rgba(217,119,6,.28); background: var(--accent-glow); }
+.metric-card.clickable { cursor: pointer; }
 
 .metric-num {
   font-family: var(--font-display);
@@ -449,6 +449,7 @@ td {
 .badge-manual     { background: var(--blue-dim);    color: var(--blue);    }
 .badge-photo      { background: var(--green-dim);   color: var(--green);   }
 .badge-video      { background: var(--purple-dim);  color: var(--purple);  }
+.badge-warn       { background: var(--accent-glow); color: var(--accent-h); }
 
 /* --- Custom checkbox toggle --- */
 input[type="checkbox"].toggle {
@@ -472,11 +473,6 @@ input[type="checkbox"].toggle:checked::after {
 }
 input[type="checkbox"].toggle:hover:not(:checked) { border-color: var(--accent); }
 input[type="checkbox"].toggle:active { transform: scale(0.9); }
-
-/* htmx indicator on checkbox */
-input[type="checkbox"].toggle.htmx-request {
-  opacity: 0.5; pointer-events: none;
-}
 
 /* --- Status select (HTMX inline) --- */
 select.status-select {
@@ -691,6 +687,69 @@ select.status-select option { background: var(--surface-2); color: var(--text); 
 }
 .modal-actions .btn-ghost,
 .modal-actions .btn-danger { flex: 1; justify-content: center; }
+
+/* --- Dash detail modal --- */
+.modal-wide {
+  width: min(680px, 92vw);
+  max-width: none;
+  max-height: 82vh;
+  padding: 0;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+.dash-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.75rem 1rem 0;
+  flex-shrink: 0;
+}
+.dash-modal-close {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-3); padding: 0.35rem;
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition), color var(--transition);
+}
+.dash-modal-close:hover { background: var(--surface-2); color: var(--text); }
+.dash-modal-close svg { width: 18px; height: 18px; }
+.dash-modal-body {
+  overflow-y: auto;
+  padding: 0.25rem 1.5rem 1.5rem;
+  flex: 1;
+}
+.detail-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem; font-weight: 600;
+  color: var(--text);
+  margin: 0 0 1.1rem;
+}
+.detail-table-wrap { overflow-x: auto; }
+.detail-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.detail-table th {
+  text-align: left; padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-3); font-size: 0.72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.detail-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border-lt);
+  vertical-align: middle;
+}
+.detail-table tr:last-child td { border-bottom: none; }
+.detail-empty {
+  color: var(--text-3); text-align: center;
+  padding: 2.5rem 0; font-size: 0.875rem;
+}
+.detail-loading {
+  color: var(--text-3); text-align: center;
+  padding: 2.5rem 0; font-size: 0.875rem;
+}
 
 /* --- Empty state --- */
 .empty-state {
